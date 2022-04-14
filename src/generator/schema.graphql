@@ -1,0 +1,503 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+directive @upper on FIELD_DEFINITION
+
+type Auth {
+  """JWT access token"""
+  accessToken: JWT!
+
+  """JWT refresh token"""
+  refreshToken: JWT!
+  user: User!
+}
+
+type Book implements IBase & IResource {
+  author: String
+  bookCategory: BookCategory!
+  brand: Brand
+  comment: BookComment!
+  condition: Condition!
+  createdAt: Date!
+  currencyCode: String!
+  currencySymbol: String!
+  description: String!
+  doubanRating: Int!
+  goodreadsRating: Int!
+  id: ID!
+  images: [Image!]
+  isDelete: Boolean!
+  isbn13: String!
+  language: String!
+  latestPutawayTime: Date!
+  originalPrice: Int!
+  originalTitle: String
+  price: Int!
+  producer: Producer!
+  publishDate: Date!
+  publisher: String!
+  refusedReason: String
+  stock: Boolean
+  stockNum: Int
+  subTitle: String
+  tags: [Tag!]
+  title: String!
+  updatedAt: Date!
+  userContributed: [UserContribute!]
+}
+
+type BookCategory implements Category & IBase & IResource {
+  book: Book
+  children: [Category!]
+  createdAt: Date!
+  depth: Int
+  id: ID!
+  isDelete: Boolean!
+  name: String!
+  parent: Category
+  type: String
+  updatedAt: Date!
+}
+
+type BookComment implements IBase & IResource {
+  badNum: Int!
+  book: Book!
+  children: [Comment!]!
+  createdAt: Date!
+  createdUser: User!
+  goodNum: Int!
+  id: ID!
+  isDelete: Boolean!
+  isOpened: Boolean!
+  parent: Comment!
+  product: Product!
+  type: ProductType!
+  updatedAt: Date!
+}
+
+type Brand implements IBase & IResource {
+  category: Category
+  chineseTitle: String
+  createdAt: Date!
+  id: ID!
+  image: Image
+  intro: String
+  isDelete: Boolean!
+  logo: String
+  originalTitle: String!
+  products: [Product!]
+  updatedAt: Date!
+}
+
+interface Category implements IBase & IResource {
+  children: [Category!]
+  createdAt: Date!
+  depth: Int
+  id: ID!
+  isDelete: Boolean!
+  name: String!
+  parent: Category
+  type: String
+  updatedAt: Date!
+}
+
+type Clothing implements IBase & IResource {
+  brand: Brand
+  comments: [ClothingComment!]
+  condition: Condition!
+  createdAt: Date!
+  flaw: ClothingFlaw
+  gender: Gender
+  id: ID!
+  images: [Image!]
+  isDelete: Boolean!
+  materials: ClothingMaterial
+  measureDiagram: Image
+  measures: ClothingMaterial
+  name: String
+  originalPrice: Int!
+  price: Int!
+  refusedReason: String
+  size: ClothingSize
+  stock: Boolean
+  stockNum: Int
+  tags: [Tag!]
+  updatedAt: Date!
+  userContributed: [UserContribute!]
+}
+
+type ClothingComment implements IBase & IResource {
+  badNum: Int!
+  children: [Comment!]!
+  clothing: Clothing!
+  createdAt: Date!
+  createdUser: User!
+  goodNum: Int!
+  id: ID!
+  isDelete: Boolean!
+  isOpened: Boolean!
+  parent: Comment!
+  product: Product!
+  type: ProductType!
+  updatedAt: Date!
+}
+
+type ClothingFlaw implements IBase & IResource {
+  clothing: Clothing!
+  createdAt: Date!
+  flawReason: String!
+  id: ID!
+  images: [ClothingFlawImage!]!
+  isDelete: Boolean!
+  product: Product!
+  updatedAt: Date!
+}
+
+type ClothingFlawImage implements File & IBase & IResource {
+  clothingFlaw: ClothingFlaw!
+  createdAt: Date!
+  filename: String!
+  id: ID!
+  isDelete: Boolean!
+  path: String!
+  size: ImageSize!
+  sortNum: Int
+  type: FlawImageType!
+  updatedAt: Date!
+}
+
+enum ClothingInternationalSize {
+  AverageSize
+  M
+  S
+  XL
+  XS
+  XXS
+}
+
+type ClothingMaterial {
+  name: String!
+  percentage: Int!
+}
+
+type ClothingSize {
+  chineseStandardSize: String!
+  jacketSize: ClothingInternationalSize
+  pantsSize: ClothingInternationalSize
+}
+
+type Comment implements IBase & IResource {
+  badNum: Int!
+  children: [Comment!]!
+  createdAt: Date!
+  createdUser: User!
+  goodNum: Int!
+  id: ID!
+  isDelete: Boolean!
+  isOpened: Boolean!
+  parent: Comment!
+  product: Product!
+  type: ProductType!
+  updatedAt: Date!
+}
+
+enum Condition {
+  FINE
+  MEDIUM
+  UNKNOWN
+}
+
+input CreateEmailInput {
+  type: EmailType!
+  userId: String!
+}
+
+input CreateUserInput {
+  email: String = ""
+  firstName: String = ""
+  gender: Gender
+  lastName: String = ""
+  name: String = ""
+  password: String!
+}
+
+"""Date custom scalar type"""
+scalar Date
+
+type Electronics implements IBase & IResource {
+  brand: Brand
+  condition: Condition!
+  createdAt: Date!
+  description: String!
+  flaw: ProductFlaw
+  id: ID!
+  images: [Image!]
+  isDelete: Boolean!
+  kindleSpecifications: [KindleSpecification!]
+  officialSite: String
+  originalPrice: Int!
+  price: Int!
+  refusedReason: String
+  stock: Boolean
+  stockNum: Int
+  tags: [Tag!]
+  updatedAt: Date!
+  userContributed: [UserContribute!]
+}
+
+type Email implements IBase & IResource {
+  createdAt: Date!
+  fromUser: User!
+  id: ID!
+  isDelete: Boolean!
+  isOpened: Boolean!
+  toUser: User!
+  type: EmailType!
+  updatedAt: Date!
+}
+
+enum EmailType {
+  """forgot_password"""
+  FORGOT_PASSWORD
+
+  """verify_email"""
+  VERIFY_EMAIL
+}
+
+interface File implements IBase & IResource {
+  createdAt: Date!
+  filename: String!
+  id: ID!
+  isDelete: Boolean!
+  path: String!
+  updatedAt: Date!
+}
+
+enum FlawImageType {
+  FLAW_DETAIL
+  FLAW_POSITION
+}
+
+enum Gender {
+  FEMALE
+  MALE
+  UNKNOWN
+}
+
+interface IBase implements IResource {
+  createdAt: Date!
+  id: ID!
+  isDelete: Boolean!
+  updatedAt: Date!
+}
+
+interface IResource {
+  createdAt: Date!
+  id: ID!
+  updatedAt: Date!
+}
+
+type Image implements File & IBase & IResource {
+  createdAt: Date!
+  filename: String!
+  id: ID!
+  isDelete: Boolean!
+  path: String!
+  size: ImageSize!
+  sortNum: Int
+  updatedAt: Date!
+}
+
+enum ImageSize {
+  LARGE
+  MEDIUM
+  ORIGIN
+  SMALL
+}
+
+"""
+A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction.
+"""
+scalar JWT
+
+type KindleSpecification {
+  name: String!
+  value: Int!
+}
+
+type Mutation {
+  createEmail(input: CreateEmailInput!): Email!
+  createLocalUser(user: CreateUserInput!): User!
+  loginLocal: Token!
+  openEmail(id: String!): Boolean!
+  refreshToken(token: JWT!): Token!
+  signup(data: CreateUserInput!): Auth!
+  updateUser(data: UpdateUserInput!): User!
+}
+
+type OpenCollection implements IBase & IResource {
+  books: [UserContribute!]!
+  contributors: [UserContribute!]!
+  createdAt: Date!
+  id: ID!
+  isDelete: Boolean!
+  openCollectionImage: OpenCollectionImage!
+  proposer: User!
+  updatedAt: Date!
+  userContributes: [UserContribute!]!
+}
+
+type OpenCollectionImage implements File & IBase & IResource {
+  createdAt: Date!
+  filename: String!
+  id: ID!
+  isDelete: Boolean!
+  openCollection: OpenCollection!
+  path: String!
+  size: ImageSize!
+  sortNum: Int
+  updatedAt: Date!
+}
+
+type Producer implements IBase & IResource {
+  booksCount: Int!
+  createdAt: Date!
+  description: String!
+  id: ID!
+  image: String!
+  isDelete: Boolean!
+  maskColor: String!
+  name: String!
+  updatedAt: Date!
+}
+
+type Product implements IBase & IResource {
+  brand: Brand
+  condition: Condition!
+  createdAt: Date!
+  id: ID!
+  images: [Image!]
+  isDelete: Boolean!
+  originalPrice: Int!
+  price: Int!
+  refusedReason: String
+  stock: Boolean
+  stockNum: Int
+  tags: [Tag!]
+  updatedAt: Date!
+  userContributed: [UserContribute!]
+}
+
+type ProductFlaw implements IBase & IResource {
+  createdAt: Date!
+  flawReason: String!
+  id: ID!
+  isDelete: Boolean!
+  product: Product!
+  updatedAt: Date!
+}
+
+enum ProductType {
+  BOOK
+  CLOTHING
+  ELECTRONICS
+}
+
+type Query {
+  allUser: [User!]!
+  emails: [Email!]!
+  findAllEmail: [Email!]!
+  findUser: User!
+}
+
+type Role implements IBase & IResource {
+  createdAt: Date!
+  id: ID!
+  isDelete: Boolean!
+  name: String!
+  updatedAt: Date!
+  users: [User!]!
+}
+
+type ShoppingCart implements IBase & IResource {
+  createdAt: Date!
+  id: ID!
+  isDelete: Boolean!
+  updatedAt: Date!
+}
+
+type Tag implements IBase & IResource {
+  createdAt: Date!
+  description: String!
+  id: ID!
+  isDelete: Boolean!
+  maskColor: String!
+  name: String!
+  product: [Product!]!
+  updatedAt: Date!
+}
+
+type Token {
+  """JWT access token"""
+  accessToken: JWT!
+
+  """JWT refresh token"""
+  refreshToken: JWT!
+}
+
+input UpdateUserInput {
+  email: String = ""
+  firstName: String = ""
+  gender: Gender
+  lastName: String = ""
+  name: String = ""
+  password: String
+}
+
+type User implements IBase & IResource {
+  avatar: String
+  books: [Book!]
+  clothings: [Clothing!]
+  comments: [Comment!]
+  createdAt: Date!
+  electronics: [Electronics!]
+  email: String
+  firstName: String
+  gender: Gender
+  id: ID!
+  isActive: Boolean
+  isDelete: Boolean!
+  isLocked: Boolean
+  isOnline: Boolean
+  isVerified: Boolean
+  lastName: String
+  name: String
+  openCollectionProposer: [OpenCollection!]
+  openid: String
+  password: String
+  reason: String
+  receiveEmails: [Email!]
+  resetPasswordExpires: Int
+  resetPasswordToken: String
+  roleNames: [String!]!
+  roles: Role
+  sendEmails: [Email!]
+  session_key: String
+  shoppingCart: ShoppingCart
+  unionid: String
+  updatedAt: Date!
+  userContributes: [UserContribute!]
+}
+
+type UserContribute implements IBase & IResource {
+  contributor: User!
+  createdAt: Date!
+  id: ID!
+  isDelete: Boolean!
+  openCollection: OpenCollection!
+  product: Product!
+  reason: String!
+  type: String!
+  updatedAt: Date!
+}

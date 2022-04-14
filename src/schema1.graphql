@@ -1,0 +1,229 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+directive @upper on FIELD_DEFINITION
+
+type Auth {
+  """JWT access token"""
+  accessToken: JWT!
+
+  """JWT refresh token"""
+  refreshToken: JWT!
+}
+
+type Book {
+  author: String!
+  comments: [BookComment!]!
+  createdAt: Date!
+  currencyCode: String!
+  currencySymbol: String!
+  description: String
+  doubanRating: Int
+  goodreadsRating: Int
+  id: ID!
+  images: [BookImage!]!
+  isbn13: String!
+  language: String
+  latestPutawayTime: Date!
+  originalTitle: String
+  producer: Producer!
+  publishDate: Date!
+  publisher: String!
+  stock: Boolean
+  subTitle: String
+  tags: BookTag!
+  title: String!
+  updatedAt: Date!
+  userContributed: [UserContribute!]!
+}
+
+type BookComment {
+  badNum: Int!
+  children: BookComment!
+  createdAt: Date!
+  createdUser: User!
+  goodNum: Int!
+  id: ID!
+  isOpened: Boolean!
+  parent: BookComment!
+  topicBook: Book
+  topicBookCollection: Book
+  type: EmailType!
+  updatedAt: Date!
+}
+
+type BookImage {
+  book: Book!
+  createdAt: Date!
+  filename: String!
+  id: ID!
+  openCollection: OpenCollection!
+  path: String!
+  size: ImageSize!
+  sortNum: Int!
+  type: String!
+  updatedAt: Date!
+}
+
+type BookTag {
+  books: [Book!]!
+  createdAt: Date!
+  id: ID!
+  name: String!
+  updatedAt: Date!
+}
+
+input CreateEmailInput {
+  type: EmailType!
+  userId: String!
+}
+
+input CreateUserInput {
+  email: String = ""
+  firstName: String = ""
+  gender: Gender
+  lastName: String = ""
+  name: String = ""
+  password: String!
+}
+
+scalar Date
+
+type Email {
+  createdAt: Date!
+  fromUser: User!
+  id: ID!
+  isOpened: Boolean!
+  toUser: User!
+  type: EmailType!
+  updatedAt: Date!
+}
+
+enum EmailType {
+  """forgot_password"""
+  FORGOT_PASSWORD
+
+  """verify_email"""
+  VERIFY_EMAIL
+}
+
+enum Gender {
+  FEMALE
+  MALE
+  UNKNOWN
+}
+
+enum ImageSize {
+  LARGE
+  MEDIUM
+  ORIGIN
+  SMALL
+}
+
+"""
+A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction.
+"""
+scalar JWT
+
+type Mutation {
+  createEmail(input: CreateEmailInput!): Email!
+  createLocalUser(user: CreateUserInput!): User!
+  loginLocal: Token!
+  openEmail(id: String!): Boolean!
+  refreshToken(token: JWT!): Token!
+  signup(data: CreateUserInput!): Auth!
+  updateUser(data: UpdateUserInput!): User!
+}
+
+type OpenCollection {
+  books: [UserContribute!]!
+  contributors: [UserContribute!]!
+  contributorsCount: Int!
+  createdAt: Date!
+  description: String
+  id: ID!
+  image: BookImage!
+  maskColor: String
+  name: String!
+  proposer: User!
+  updatedAt: Date!
+  userContributes: [UserContribute!]!
+}
+
+type Producer {
+  books: [Book!]!
+  booksCount: Int!
+  createdAt: Date!
+  description: String!
+  id: ID!
+  image: String!
+  maskColor: String!
+  name: String!
+  updatedAt: Date!
+}
+
+type Query {
+  emails: [Email!]!
+  findAllEmail: [Email!]!
+  findUser: User!
+}
+
+type Token {
+  """JWT access token"""
+  accessToken: JWT!
+
+  """JWT refresh token"""
+  refreshToken: JWT!
+}
+
+input UpdateUserInput {
+  email: String = ""
+  firstName: String = ""
+  gender: Gender
+  lastName: String = ""
+  name: String = ""
+  password: String
+}
+
+type User {
+  avatar: String!
+  bookComments: [BookComment!]!
+  books: [Book!]!
+  createdAt: Date!
+  email: String!
+  emails: Email!
+  firstName: String!
+  gender: Gender!
+  id: ID!
+  isActive: Boolean!
+  isLocked: Boolean!
+  isOnline: Boolean!
+  isVerified: Boolean!
+  lastName: String!
+  name: String!
+  openCollectionProposer: [OpenCollection!]!
+  openid: String!
+  password: String!
+  reason: String!
+  receiveEmails: [Email!]!
+  resetPasswordExpires: Int!
+  resetPasswordToken: String!
+  roleNames: [String!]!
+  sendEmails: [Email!]!
+  session_key: String!
+  unionid: String!
+  updatedAt: Date!
+  userContributes: [UserContribute!]!
+}
+
+type UserContribute {
+  book: Book!
+  contributor: User!
+  createdAt: Date!
+  id: ID!
+  openCollection: OpenCollection!
+  reason: String!
+  type: String!
+  updatedAt: Date!
+}
