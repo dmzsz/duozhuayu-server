@@ -31,7 +31,7 @@ export class Email extends IBase<Email> {
 	toUser: User
 
 	@Expose()
-	@Column({ nullable: true, type: 'varchar', default: EmailType.VERIFY_EMAIL }) // 自动识别为varchar(255)
+	@Column({ nullable: true, type: 'enum', enum: EmailType, default: EmailType.VERIFY_EMAIL }) // 自动识别为varchar(255)
 	type: EmailType
 
 	@Expose()

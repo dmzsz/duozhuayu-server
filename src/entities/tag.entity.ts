@@ -2,6 +2,7 @@ import { Expose, plainToInstance, Type } from 'class-transformer'
 import { Column, Entity, JoinTable, ManyToMany } from 'typeorm'
 import { Product } from './product.entity'
 import { IBase } from './interface/base.interface'
+import { ProductUnit } from './product-unit.entity'
 
 @Entity({
     name: 'tags',
@@ -10,6 +11,13 @@ import { IBase } from './interface/base.interface'
     }
 })
 export class Tag extends IBase<Tag> {
+
+    @Expose()
+    @Type(() => ProductUnit)
+    @ManyToMany(() => ProductUnit, productUnit => productUnit.tags,
+        { createForeignKeyConstraints: false })
+    @JoinTable({ name: 'product_units_tags' })
+    productUnit: ProductUnit[]
 
     @Expose()
     @Type(() => Product)

@@ -1,3 +1,6 @@
+
+const { customAlphabet } = require('nanoid')
+
 /**
  * Returns string by uuidv4.
  *
@@ -14,6 +17,10 @@ export const uuidv4 = (): string => {
 		const v = c === 'x' ? r : (r & 0x3) | 0x8
 		return v.toString(16)
 	})
+}
+
+export const randomId = (): string => {
+	return customAlphabet('1234567890', 18)()
 }
 
 /**
@@ -36,5 +43,5 @@ export const generateUID = (): string => {
 	return newFirstPart + newSecondPart
 }
 
-// console.log(uuidv4())
+// console.log(randomId())
 // console.log(generateUID())

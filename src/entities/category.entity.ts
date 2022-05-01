@@ -1,8 +1,9 @@
 import { Expose, plainToInstance, Type } from 'class-transformer'
-import { Column, Entity, OneToOne, TableInheritance, Tree, TreeChildren, TreeParent } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, TableInheritance, Tree, TreeChildren, TreeParent } from 'typeorm'
 import { IBase } from './interface/base.interface'
 import { CategoryType } from '@/shared/enums'
 import { ProductUnit } from './product-unit.entity'
+import { CategoryItem } from './category-item.entity'
 
 @Entity({
     name: 'categories',
@@ -10,38 +11,68 @@ import { ProductUnit } from './product-unit.entity'
         createdAt: 'ASC'
     }
 })
-@Tree('closure-table')
-@TableInheritance({ column: { type: 'varchar', name: 'type' } })
+@Tree("closure-table")
+@TableInheritance({
+    column: {
+        type: "enum",
+        name: "type",
+        enum: CategoryType,
+        default: CategoryType.BOOK
+    }
+})
 export class Category extends IBase<Category> {
 
     @Expose()
-    @Type(() => ProductUnit)
-    @OneToOne(() => ProductUnit, product => product.category, { nullable: true })
-    productUnit?: ProductUnit
+    @Type(() => CategoryItem)
+    @ManyToOne(() => CategoryItem, categoryItem => categoryItem.category,
+        { createForeignKeyConstraints: false })
+    @JoinColumn([
+        { name: "name", referencedColumnName: "name" },
+        { name: "categoryType", referencedColumnName: "type" },
+    ])
+    categoryItem?: CategoryItem
+
+    @Expose()
+    @Column({ nullable: true })
+    name: String
+
+    @Expose()
+    @Column({ nullable: true })
+    categoryType: String
 
     @Expose()
     @Type(() => Category)
     @TreeParent()
-    parent: Category
+    parent?: Category
 
     @Expose()
     @Type(() => Category)
     @TreeChildren()
-    children: Category[]
+    children?: Category[]
 
     @Expose()
     @Type(() => Category)
     @Column({ default: 1 })
-    depth: number
-
-    @Expose()
-    @Column()
-    name: string
+    level?: number
 
     @Expose()
     @Type(() => String)
-    @Column({ type: 'varchar', nullable: true })
+    // @Column({
+    //     type: "enum",
+    //     name: "type",
+    //     enum: CategoryType,
+    //     nullable: true
+    // })
+    @Column()
     type?: CategoryType
+
+    @Expose()
+    @Column({ nullable: true })
+    themeColor?: string
+
+    @Expose()
+    @Column({ nullable: true })
+    description?: string
 
     constructor(category: Partial<Category>) {
         super(category)
@@ -55,8 +86,4 @@ export class Category extends IBase<Category> {
             )
         }
     }
-}
-
-function DiscriminatorColumn(arg0: { name: string; type: string }) {
-    throw new Error('Function not implemented.')
 }

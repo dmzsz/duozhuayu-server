@@ -5,6 +5,7 @@ import { BrandCategory } from './brand-category.entity'
 import { Image } from './image.entity'
 import { Expose, plainToInstance, Type } from 'class-transformer'
 import { ObjectType } from '@nestjs/graphql'
+import { ProductUnit } from './product-unit.entity'
 
 @Entity({
     name: 'brands',
@@ -15,10 +16,10 @@ import { ObjectType } from '@nestjs/graphql'
 export class Brand extends IBase<Brand> {
 
     @Expose()
-    @Type(() => Product)
-    @OneToMany(() => Product, product => product.brand,
+    @Type(() => ProductUnit)
+    @OneToMany(() => ProductUnit, product => product.brand,
         { nullable: true })
-    product?: Product[]
+    productUnit?: ProductUnit[]
 
     @Expose()
     @Type(() => BrandCategory)

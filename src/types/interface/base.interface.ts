@@ -1,4 +1,4 @@
-import { uuidv4 } from '@/shared/utils/uuid'
+import { randomId } from '@/shared/utils/uuid'
 import { Field, ID, InterfaceType } from '@nestjs/graphql'
 import { Expose } from 'class-transformer'
 import { IResource } from './resource.interface'
@@ -47,7 +47,7 @@ export abstract class IBase<T extends IBase<T> = ParentItself> implements IResou
   constructor(plainInstance: Partial<T>) {
     if (plainInstance) {
 
-      this.id = this.id || uuidv4()
+      this.id = this.id || randomId()
       this.createdAt = this.createdAt || new Date()
       this.updatedAt = new Date()
       this.isDelete = false

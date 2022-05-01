@@ -3,7 +3,7 @@ import { Field, InterfaceType, ObjectType } from '@nestjs/graphql'
 import { Expose, plainToInstance, Type } from 'class-transformer'
 import { CategoryType } from '@/shared/enums'
 
-@InterfaceType({
+@ObjectType({
     implements: () => [IBase],
 })
 export class Category extends IBase<Category> {
@@ -20,11 +20,15 @@ export class Category extends IBase<Category> {
 
     @Expose()
     @Field({ nullable: true, defaultValue: 0 })
-    depth: number
+    level: number
 
     @Expose()
     @Field()
     name: string
+
+    // @Expose()
+    // @Field()
+    // categoryType: string
 
     @Expose()
     @Field({nullable: true})

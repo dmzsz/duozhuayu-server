@@ -4,17 +4,13 @@ import { Expose, plainToInstance } from 'class-transformer'
 import { Column, CreateDateColumn, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 import { IResource } from './resource.interface'
 
-type ParentItself = IBase<ParentItself>
+type ParentItself = IBaseExcludeId<ParentItself>
 
 // @InterfaceType({
 //   // workaround for bug: https://github.com/MichalLytek/type-graphql/issues/373
 //   resolveType: value => value.constructor.name,
 // })
-export abstract class IBase<T extends IBase<T> = ParentItself> implements IResource {
-
-  @Expose()
-  @PrimaryColumn()
-  id?: string
+export abstract class IBaseExcludeId<T extends IBaseExcludeId<T> = ParentItself> implements IResource {
 
   @Expose()
   @CreateDateColumn()
@@ -39,8 +35,7 @@ export abstract class IBase<T extends IBase<T> = ParentItself> implements IResou
    */
   constructor(plainInstance: Partial<T>) {
     if (plainInstance) {
-      
-      this.id = plainInstance.id || randomId()
+
       this.createdAt = plainInstance.createdAt || new Date()
       this.updatedAt = new Date()
       this.isDelete = plainInstance.isDelete || false

@@ -6,6 +6,7 @@ import { Product } from './product.entity'
 import { OpenCollection } from './open-collection.entity'
 import { Brand } from './brand.entity'
 import { ProductFlaw } from './product-flaw.entity'
+import { ProductUnit } from './product-unit.entity'
 
 @Entity({
 	name: 'images',
@@ -23,6 +24,16 @@ export class Image extends File {
 	@ManyToOne(() => Product, product => product.images,
 		{ createForeignKeyConstraints: false, nullable: true })
 	product?: Product
+
+
+	/**
+	 * 所属product
+	 */
+	@Expose()
+	@Type(() => ProductUnit)
+	@ManyToOne(() => ProductUnit, productUnit => productUnit.images,
+		{ createForeignKeyConstraints: false, nullable: true })
+	productUnit?: ProductUnit
 
 	/**
 	 * 所属Brand
@@ -53,7 +64,7 @@ export class Image extends File {
 	openCollection?: OpenCollection
 
 	@Expose()
-	@Column({ type: 'varchar', default: ImageSize.ORIGIN })
+	@Column({ type: 'enum', enum: ImageSize, default: ImageSize.ORIGIN })
 	size: ImageSize
 
 
@@ -61,7 +72,7 @@ export class Image extends File {
 	 * 封皮 书背面 插图 详情介绍 商标
 	 */
 	@Expose()
-	@Column({ type: 'varchar', default: ImageType.COVER })
+	@Column({ type: 'enum', enum: ImageType, default: ImageType.COVER })
 	type: ImageType
 
 	/**

@@ -12,6 +12,7 @@ import { configLog } from './config/log.config'
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor'
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor'
 import { ValidationPipe } from './common/pipes/validation.pipe'
+import Seed from "@/seed"
 
 declare const module: any
 
@@ -33,6 +34,9 @@ async function bootstrap() {
   isConnected
     ? Logger.log(`🌨️  Database connected`, 'TypeORM', false)
     : Logger.error(`❌  Database connect error`, '', 'TypeORM', false)
+  new Promise(()=>{
+    // Seed()
+  })
 
   // node_env !== 'testing' && app.use(LoggerMiddleware) // 在app.module中写了
 

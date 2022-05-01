@@ -20,7 +20,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core'
 // import { DateScalar, EmailTypeScalar, GenderScalar, TokenTypeScalar } from './scalars'
 // import { UserService } from './services'
 // import * as entities from '@/entities'
-// import * as resolvers from './resolvers'
+import * as resolvers from './resolvers'
 // import { AuthResolver, EmailResolver, UsersResolver } from './resolvers'
 // import {
 //   Book,
@@ -50,10 +50,10 @@ import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core'
     // GenderScalar,
     // TokenTypeScalar,
 
-    // ...Object.values(resolvers),
-    EmailResolver,
-    AuthResolver,
-    UsersResolver,
+    ...Object.values(resolvers),
+    // EmailResolver,
+    // AuthResolver,
+    // UsersResolver,
     // ...Object.values(Services),
     UserService,
   ],

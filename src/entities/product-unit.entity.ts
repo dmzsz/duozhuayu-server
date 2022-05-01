@@ -3,8 +3,11 @@ import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany
 import { Brand } from './brand.entity'
 import { Category } from './category.entity'
 import { IBase } from './interface/base.interface'
+import { ProductUnitCategory } from './product-unit-category.entity'
 import { Product } from './product.entity'
 import { Specification } from './specification.entity'
+import { Tag } from './tag.entity'
+import { Image } from './image.entity'
 
 /**
  * 产品单元 品类 同一品类有相同属性只是属性的值不同而已
@@ -26,15 +29,18 @@ export class ProductUnit extends IBase<ProductUnit> {
   specifications: Specification[]
 
   /**
- * 产品单元的类型
- */
+   * 产品单元的类型
+   */
   @Expose()
-  @Type(() => Category)
-  @OneToOne(() => Category,
-    category => category.productUnit,
+  @Type(() => ProductUnitCategory)
+  @ManyToOne(() => ProductUnitCategory, category => category.productUnit,
     { nullable: true })
-  @JoinColumn()
-  category?: Category
+  category?: ProductUnitCategory
+
+  @Expose()
+  @Type(() => Brand)
+  @OneToMany(() => Brand, brand => brand.productUnit, { nullable: true })
+  brand?: Brand
 
   /**
    * 拥有的具体商品
@@ -44,17 +50,16 @@ export class ProductUnit extends IBase<ProductUnit> {
   @OneToMany(() => Product, (product) => product.productUnit)
   product: Product
 
-  // @Expose()
-  // @Type(() => BookTag)
-  // @ManyToMany(() => BookTag,
-  //   tag => tag.books,
-  //   { createForeignKeyConstraints: false, nullable: true })
-  // tags?: BookTag
+  @Expose()
+  @Type(() => Tag)
+  @ManyToMany(() => Tag, tag => tag.productUnit,
+    { createForeignKeyConstraints: false, nullable: true })
+  tags?: Tag
 
-  // @Expose()
-  // @Type(() => Image)
-  // @OneToMany(() => Image, image => image.product)
-  // images: Image[]
+  @Expose()
+  @Type(() => Image)
+  @OneToMany(() => Image, image => image.productUnit)
+  images: Image[]
 
   /**
    * 出品方

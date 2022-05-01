@@ -47,15 +47,16 @@ type Book implements IBase & IResource {
   userContributed: [UserContribute!]
 }
 
-type BookCategory implements Category & IBase & IResource {
+type BookCategory implements IBase & IResource {
   book: Book
   children: [Category!]
   createdAt: Date!
-  depth: Int
   id: ID!
   isDelete: Boolean!
+  level: Int
   name: String!
   parent: Category
+  themeColor: String!
   type: String
   updatedAt: Date!
 }
@@ -90,12 +91,12 @@ type Brand implements IBase & IResource {
   updatedAt: Date!
 }
 
-interface Category implements IBase & IResource {
+type Category implements IBase & IResource {
   children: [Category!]
   createdAt: Date!
-  depth: Int
   id: ID!
   isDelete: Boolean!
+  level: Int
   name: String!
   parent: Category
   type: String
@@ -406,9 +407,12 @@ enum ProductType {
 
 type Query {
   allUser: [User!]!
+  bookCategories: [BookCategory!]!
   emails: [Email!]!
+  findAllBook: [Book!]!
   findAllEmail: [Email!]!
   findUser: User!
+  stockBook: [Book!]!
 }
 
 type Role implements IBase & IResource {

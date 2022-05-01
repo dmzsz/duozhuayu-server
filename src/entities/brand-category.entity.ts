@@ -4,7 +4,7 @@ import { CategoryType } from '@/shared/enums'
 import { Category } from './category.entity'
 import { Expose, plainToInstance, Type } from 'class-transformer'
 
-@ChildEntity()
+@ChildEntity(CategoryType.BRAND)
 export class BrandCategory extends Category {
     
     @Expose()
@@ -12,9 +12,9 @@ export class BrandCategory extends Category {
     @OneToOne(() => Brand, brand => brand.category, { nullable: true })
     brand?: Brand
 
-    @Expose()
-    @Column({ type: 'varchar', nullable: true, default: CategoryType.BRAND })
-    override type?: CategoryType = CategoryType.BRAND
+    // @Expose()
+    // @Column({ type: 'varchar', nullable: true, default: CategoryType.BRAND })
+    // override type?: CategoryType = CategoryType.BRAND
 
     constructor(category: Partial<BrandCategory>) {
         super(category)

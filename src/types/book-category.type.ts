@@ -9,7 +9,7 @@ import { Brand } from './brand.type'
 import { Category } from './category.type'
 
 @ObjectType({
-    implements: () => [Category],
+    // implements: () => [Category],
 })
 export class BookCategory extends Category {
 
@@ -17,6 +17,10 @@ export class BookCategory extends Category {
     @Type(() => Book)
     @Field(() => Book, { nullable: true })
     book?: Book
+
+    @Expose()
+    @Field()
+    themeColor: string
 
     constructor(category: Partial<BookCategory>) {
         super(category)

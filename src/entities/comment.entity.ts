@@ -24,7 +24,7 @@ export class Comment extends IBase<Comment> {
 	product?: Product
 
 	@Expose()
-	@Column({ type: 'varchar' }) // 自动识别为varchar(255)
+	@Column({ type: 'enum', enum: ProductType }) // 自动识别为varchar(255)
 	type: ProductType
 
 	/**

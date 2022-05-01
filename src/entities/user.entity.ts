@@ -34,7 +34,10 @@ export class User extends IBase<User> {
 	/**
 	 * 买到的所有商品
 	 */
-
+	@Expose()
+	@Type(() => Product)
+	@OneToMany(() => Product, product => product.buyer)
+	purchasedProducts?: Product[]
 
 	@Expose()
 	@Type(() => Email)
@@ -119,7 +122,7 @@ export class User extends IBase<User> {
 	}
 
 	@Expose()
-	@Column({ type: 'varchar', nullable: true }) // 不需要写 (()=>String) 数据库查询会忽略select email.gendar 字段的 造成返回gender:undefined
+	@Column({ type: 'enum', enum: Gender, nullable: true }) // 不需要写 (()=>String) 数据库查询会忽略select email.gendar 字段的 造成返回gender:undefined
 	gender?: Gender
 
 	@Expose()

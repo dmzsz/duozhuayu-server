@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne } from 'typeorm'
+import { Entity, Column, ManyToOne, Index } from 'typeorm'
 import { Exclude, Expose, plainToInstance, Type } from 'class-transformer'
 import { Product } from './product.entity'
 import { IBase } from './interface/base.interface'
@@ -31,6 +31,7 @@ export class UserContribute extends IBase<UserContribute> {
 	 */
 	@Expose()
 	@Type(() => Product)
+	@Index(() => [Product, OpenCollection])
 	@ManyToOne(() => Product, Product => Product.userContributed,
 		{ createForeignKeyConstraints: false })
 	product: Product
@@ -52,7 +53,7 @@ export class UserContribute extends IBase<UserContribute> {
 	reason: string
 
 	@Expose()
-	@Column({ type: 'varchar', default: ProductType.BOOK })
+	@Column({ type: 'enum', enum: ProductType, default: ProductType.BOOK })
 	type: ProductType
 
 	constructor(userContribute: Partial<UserContribute>) {

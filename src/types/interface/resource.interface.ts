@@ -9,7 +9,6 @@ export abstract class IResource {
   @Field(type => ID)
   id: string
 
-
   @Expose()
   @Field()
   createdAt: Date

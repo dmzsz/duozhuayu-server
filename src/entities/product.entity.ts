@@ -27,8 +27,8 @@ export class Product extends IBase<Product> {
    * 卖家
    */
   @Expose()
-  @Type(() => Comment)
-  @ManyToOne(() => Comment, comment => comment.product,
+  @Type(() => User)
+  @ManyToOne(() => User, user => user.saleProducts,
     { createForeignKeyConstraints: false, nullable: true })
   seller?: User
 
@@ -36,10 +36,9 @@ export class Product extends IBase<Product> {
    * 买家
    */
   @Expose()
-  @Type(() => Comment)
-  @OneToOne(() => Comment, comment => comment.product,
+  @Type(() => User)
+  @OneToOne(() => User, user => user.purchasedProducts,
     { createForeignKeyConstraints: false, nullable: true })
-  @JoinColumn()
   buyer?: User
 
   @Expose()
@@ -47,11 +46,6 @@ export class Product extends IBase<Product> {
   @OneToMany(() => ProductUnit, productUnit => productUnit.product,
     { nullable: true })
   productUnit?: ProductUnit
-
-  @Expose()
-  @Type(() => Brand)
-  @OneToMany(() => Brand, brand => brand.product, { nullable: true })
-  brand?: Brand
 
   @Expose()
   @Type(() => Tag)
@@ -149,7 +143,7 @@ export class Product extends IBase<Product> {
    */
   @Expose()
   @Type(() => String)
-  @Column({ default: Condition.MEDIUM })
+  @Column({ type: "enum", enum: Condition, default: Condition.MEDIUM })
   condition?: Condition
 
   /**

@@ -3,7 +3,7 @@ import { CreateUserInput, UpdateUserInput } from '../inputs/user.input'
 import { FindOneOptions, getRepository, Repository } from 'typeorm'
 import { PasswordService } from '@/common/providers/password.service'
 import { ApolloError, AuthenticationError, ForbiddenError } from 'apollo-server-core'
-import { User } from '@/entities/user.entity'
+import { User } from '@/entities'
 
 @Injectable()
 export class UserService {
