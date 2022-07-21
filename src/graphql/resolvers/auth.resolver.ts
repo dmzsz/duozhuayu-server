@@ -13,16 +13,16 @@ import { TokenType, EmailType } from '@/shared/enums'
 // import { EmailResolver } from '@/graphql/resolvers'
 import { EmailService } from '@/common/providers/email.service';
 import { ApolloError } from 'apollo-server-core'
-// import { UserService } from '../services'
+// import { CustomerService } from '../services'
 import { validate } from 'class-validator'
 import { forwardRef, Inject, NotFoundException } from '@nestjs/common'
 import { AuthenticationError } from 'apollo-server-express'
-// import { PublicDecorator, UserDecorator } from '@/common/decorators'
+// import { PublicDecorator, CustomerDecorator } from '@/common/decorators'
 import { PasswordService } from '@/common/providers/password.service'
 import { PublicDecorator } from '@/common/decorators/public.decorator'
-import { CreateUserInput, LoginUserInput } from '../inputs/user.input'
+import { CreateCustomerInput, LoginCustomerInput } from '../inputs/customer.input'
 import { EmailResolver } from './email.resolver'
-import { UserService } from '../services/user.service'
+import { CustomerService } from '../services/customer.service'
 
 @Resolver(() => Auth)
 export class AuthResolver {
@@ -33,36 +33,36 @@ export class AuthResolver {
     @Inject(forwardRef(() => EmailResolver))
     private readonly emailResolver: EmailResolver,
     private readonly emailService: EmailService,
-    private readonly userService: UserService,
+    private readonly customerService: CustomerService,
     private readonly passwordService: PasswordService,
   ) {
     this.USER_SUBSCRIPTION = configService.get('USER_SUBSCRIPTION')
   }
 
   @Mutation(() => Auth)
-  async signup(@Args('data') data: CreateUserInput,
+  async signup(@Args('data') data: CreateCustomerInput,
     @Context('pubsub') pubsub: any,
     @Context('req') req: any) {
     try {
       data.email = data.email.toLowerCase()
-      const createdUser = await this.userService.createLocalUser(data)
-      pubsub.publish(this.USER_SUBSCRIPTION, { userCreated: createdUser })
+      const createdCustomer = await this.customerService.createLocalCustomer(data)
+      pubsub.publish(this.USER_SUBSCRIPTION, { customerCreated: createdCustomer })
 
-      const emailToken = await this.authService.generateToken(createdUser, TokenType.EMAIL_TOKEN)
+      const emailToken = await this.authService.generateToken(createdCustomer, TokenType.EMAIL_TOKEN)
 
       const existedEmail = await this.emailResolver.createEmail({
-        userId: createdUser.id,
+        customerId: createdCustomer.id,
         type: EmailType.VERIFY_EMAIL
       })
 
       await this.emailService.sendMail(
         EmailType.VERIFY_EMAIL,
-        createdUser,
+        createdCustomer,
         req,
         emailToken,
         existedEmail.id
       )
-      return createdUser
+      return createdCustomer
     } catch (error) {
       throw new ApolloError(error)
     }
@@ -70,26 +70,26 @@ export class AuthResolver {
 
   @PublicDecorator()
   @Mutation(() => Token)
-  async loginLocal(userInput: LoginUserInput): Promise<Token> {
-    let user
+  async loginLocal(customerInput: LoginCustomerInput): Promise<Token> {
+    let customer
     try {
-      if (userInput.firstName) {
-        validate(userInput, { groups: ['byFull'] })
-        user = await this.userService.findOne({ where: { firstName: userInput.firstName, lastName: userInput.lastName } });
-        if (!user) throw new NotFoundException(`No user found for firstName: ${userInput.firstName} lastName: ${userInput.lastName}`);
-      } else if (userInput.name) {
-        validate(userInput, { groups: ['default'] })
-        user = await this.userService.findOne({ where: { name: userInput.name } });
-        if (!user) throw new NotFoundException(`No user found for name: ${userInput.name}`);
-      } else if (userInput.email) {
-        validate(userInput, { groups: ['byEmail'] })
-        user = await this.userService.findOne({ where: { email: userInput.email } });
-        if (!user) throw new NotFoundException(`No user found for email: ${userInput.email}`);
+      if (customerInput.firstName) {
+        validate(customerInput, { groups: ['byFull'] })
+        customer = await this.customerService.findOne({ where: { firstName: customerInput.firstName, lastName: customerInput.lastName } });
+        if (!customer) throw new NotFoundException(`No customer found for firstName: ${customerInput.firstName} lastName: ${customerInput.lastName}`);
+      } else if (customerInput.name) {
+        validate(customerInput, { groups: ['default'] })
+        customer = await this.customerService.findOne({ where: { name: customerInput.name } });
+        if (!customer) throw new NotFoundException(`No customer found for name: ${customerInput.name}`);
+      } else if (customerInput.email) {
+        validate(customerInput, { groups: ['byEmail'] })
+        customer = await this.customerService.findOne({ where: { email: customerInput.email } });
+        if (!customer) throw new NotFoundException(`No customer found for email: ${customerInput.email}`);
       }
 
       const passwordValid = await this.passwordService.validatePassword(
-        userInput.password,
-        user.password
+        customerInput.password,
+        customer.password
       );
 
       if (!passwordValid) {
@@ -97,9 +97,9 @@ export class AuthResolver {
       }
 
       return this.authService.generateTokens({
-        id: user.id,
-        username: user.name,
-        roles: user.roleNames
+        id: customer.id,
+        username: customer.name,
+        role: customer.role?.name
       });
     } catch (e) {
       throw new ApolloError(e)

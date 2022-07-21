@@ -11,12 +11,12 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super()
   }
 
-  public async validate(username: string, password: string): Promise<Payload> {
-    const user = await this.auth.validateUser(username, password)
-    if (!user) {
-      throw new UnauthorizedException('NotFoundUser')
+  public async validateCustomer(username: string, password: string): Promise<Payload> {
+    const customer = await this.auth.validateCustomer(username, password)
+    if (!customer) {
+      throw new UnauthorizedException('NotFoundCustomer')
     }
 
-    return { id: user.id, username: user.name, roles: user.roleNames }
+    return { id: customer.id, username: customer.name, role: customer.role?.name }
   }
 }

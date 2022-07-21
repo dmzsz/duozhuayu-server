@@ -5,7 +5,7 @@ import type { Request } from 'express'
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(private reflector: Reflector) { }
 
   public canActivate(context: ExecutionContext): boolean {
     const roles = this.reflector.getAllAndOverride<string[]>('roles', [
@@ -30,6 +30,6 @@ export class RolesGuard implements CanActivate {
       return false
     }
 
-    return user.roles.some((role: string) => roles.includes(role))
+    return roles.includes(user.role)
   }
 }

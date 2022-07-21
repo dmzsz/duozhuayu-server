@@ -1,6 +1,7 @@
 
 import { join } from 'path'
 import { ApolloDriverConfig } from '@nestjs/apollo'
+import { CustomNamingStrategy } from './custom-nameing-strategy'
 // type Iconfig = {
 //   [key: string]: any,
 //   graphql: ApolloDriverConfig
@@ -109,4 +110,7 @@ export const config = {
     }
   },
 
+  db: {
+    namingStrategy: new CustomNamingStrategy(),
+  }
 }

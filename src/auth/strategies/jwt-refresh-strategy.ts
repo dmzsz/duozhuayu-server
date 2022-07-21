@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy, ExtractJwt } from 'passport-jwt'
 
-// import { User } from '@/entities'
+// import { Customer } from '@/entities'
 import { JwtPayload } from '../dto/auth.interface'
 import { Repository } from 'typeorm'
 import { ConfigService } from '@nestjs/config'
@@ -24,6 +24,6 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh-
     }
 
     async validate(payload: JwtPayload) {
-        return { id: payload.id, username: payload.username, roles: payload.roles }
+        return { id: payload.id, username: payload.username, role: payload.role }
     }
 }

@@ -2,8 +2,8 @@ import { IBase } from './interface/base.interface'
 import { OpenCollectionImage } from './open-collection-image.type'
 import { Expose, plainToInstance, Type } from 'class-transformer'
 import { Field, ObjectType } from '@nestjs/graphql'
-import { User } from './user.type'
-import { UserContribute } from './user-contribute.type'
+import { Customer } from './customer.type'
+import { CustomerContribute } from './customer-contribute.type'
 
 @ObjectType({
     implements: () => [IBase],
@@ -14,33 +14,33 @@ export class OpenCollection extends IBase<OpenCollection> {
      * 提议者
      */
     @Expose()
-    @Type(() => User)
-    @Field(() => User)
-    proposer?: User
+    @Type(() => Customer)
+    @Field(() => Customer)
+    proposer?: Customer
 
     /**
      * 贡献者
      */
     @Expose()
-    @Type(() => UserContribute)
-    @Field(() => [UserContribute])
-    contributors?: UserContribute[]
+    @Type(() => CustomerContribute)
+    @Field(() => [CustomerContribute])
+    contributors?: CustomerContribute[]
 
 
     /**
      * 推荐图书
      */
     @Expose()
-    @Type(() => UserContribute)
-    @Field(() => [UserContribute])
-    books: UserContribute[]
+    @Type(() => CustomerContribute)
+    @Field(() => [CustomerContribute])
+    books: CustomerContribute[]
     
     /**
      * 用户推荐
      */
     @Expose()
-    @Field(() => [UserContribute])
-    userContributes: UserContribute[]
+    @Field(() => [CustomerContribute])
+    customerContributes: CustomerContribute[]
 
     /**
      * 顶部图片

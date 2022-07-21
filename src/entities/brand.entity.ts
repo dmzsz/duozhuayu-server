@@ -1,11 +1,25 @@
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm'
-import { Product } from './product.entity'
+import {
+    Expose,
+    plainToInstance,
+    Type
+} from 'class-transformer'
+import {
+    Column,
+    Entity,
+    Index,
+    JoinColumn,
+    ManyToOne,
+    OneToMany,
+    OneToOne
+} from 'typeorm'
+
 import { IBase } from './interface/base.interface'
-import { BrandCategory } from './brand-category.entity'
-import { Image } from './image.entity'
-import { Expose, plainToInstance, Type } from 'class-transformer'
-import { ObjectType } from '@nestjs/graphql'
-import { ProductUnit } from './product-unit.entity'
+import {
+    Category,
+    Image,
+    Product,
+    ProductUnit,
+} from './'
 
 @Entity({
     name: 'brands',
@@ -22,11 +36,12 @@ export class Brand extends IBase<Brand> {
     productUnit?: ProductUnit[]
 
     @Expose()
-    @Type(() => BrandCategory)
-    @OneToOne(() => BrandCategory, category => category.brand,
-        { nullable: true })
-    @JoinColumn()
-    category: BrandCategory
+    @Type(() => Category)
+    @Index("IDX_brands_category_id")
+    @ManyToOne(() => Category, category => category.brands,
+        { createForeignKeyConstraints: false, nullable: true })
+    @JoinColumn({ name: 'category_id' })
+    category: Category
 
     @Expose()
     @Type(() => Image)
@@ -39,7 +54,7 @@ export class Brand extends IBase<Brand> {
     name: string
 
     @Expose()
-    @Column({ nullable: true })
+    @Column({ nullable: true, name: 'chinese_title' })
     chineseTitle: string
 
     /**

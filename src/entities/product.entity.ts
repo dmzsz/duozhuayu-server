@@ -1,22 +1,42 @@
-import { Expose, plainToInstance, Type } from 'class-transformer'
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn, TableInheritance } from 'typeorm'
+import {
+  Expose,
+  plainToInstance,
+  Type
+} from 'class-transformer'
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+  TableInheritance
+} from 'typeorm'
+
 import { IBase } from './interface/base.interface'
-import { ProductUnit } from './product-unit.entity'
-import { Comment } from './comment.entity'
-import { Image } from './image.entity'
-import { Brand } from './brand.entity'
-import { Tag } from './tag.entity'
-import { UserContribute } from './user-contribute.entity'
-import { ProductSpecification } from './product-specification.entity'
-import { ProductFlaw } from './product-flaw.entity'
-import { Condition, LogisticsStatus, Paymentstatus, ProductStatus } from '@/shared/enums'
-import { User } from './user.entity'
+import {
+  Comment,
+  Customer,
+  CustomerRecommendedProduct,
+  GoodsItem,
+  Image,
+  OpenCollection,
+  Order,
+  OrderProduct,
+  ProductSpecValue,
+  ProductUnit,
+  ShoppingCartItem,
+} from './'
 
 /**
- * 产品单元
+ * 商品库存 Stock Keeping Unit（库存量单位）SKU
+ * 代表着真实在库中的商品.如:白色 128G iphone13 
  */
 @Entity({
-  name: 'products',
   orderBy: {
     createdAt: 'ASC'
   }
@@ -24,36 +44,32 @@ import { User } from './user.entity'
 export class Product extends IBase<Product> {
 
   /**
-   * 卖家
+   * 购物车
    */
   @Expose()
-  @Type(() => User)
-  @ManyToOne(() => User, user => user.saleProducts,
-    { createForeignKeyConstraints: false, nullable: true })
-  seller?: User
-
-  /**
-   * 买家
-   */
-  @Expose()
-  @Type(() => User)
-  @OneToOne(() => User, user => user.purchasedProducts,
-    { createForeignKeyConstraints: false, nullable: true })
-  buyer?: User
+  @Type(() => ShoppingCartItem)
+  @OneToMany(() => ShoppingCartItem, shoppingCartItem => shoppingCartItem.product,
+    { nullable: true })
+  shoppingCartItems?: ShoppingCartItem[]
 
   @Expose()
   @Type(() => ProductUnit)
-  @OneToMany(() => ProductUnit, productUnit => productUnit.product,
-    { nullable: true })
+  @Index("IDX_products_product_unit_id")
+  @ManyToOne(() => ProductUnit, productUnit => productUnit.products,
+    { createForeignKeyConstraints: false, nullable: true })
+  @JoinColumn({ name: 'product_unit_id' })
   productUnit?: ProductUnit
 
-  @Expose()
-  @Type(() => Tag)
-  @ManyToMany(() => Tag,
-    tag => tag.product,
-    { createForeignKeyConstraints: false, nullable: true })
-  tags?: Tag[]
 
+  @Expose()
+  @Type(() => OrderProduct)
+  @OneToMany(() => OrderProduct, order => order.product,
+    { createForeignKeyConstraints: false, nullable: true })
+  orderProducts?: OrderProduct[]
+
+  /**
+   * 商品的具体图片 比如轮波图
+   */
   @Expose()
   @Type(() => Image)
   @OneToMany(() => Image, image => image.product,
@@ -65,130 +81,124 @@ export class Product extends IBase<Product> {
    */
   @Expose()
   @Type(() => Comment)
-  @ManyToOne(() => Comment, comment => comment.product,
-    { createForeignKeyConstraints: false, nullable: true })
+  @OneToMany(() => Comment, comment => comment.product,
+    { nullable: true })
   comments?: Comment[]
 
   /**
    * 同一商品被用户在多个推荐中提及
    */
   @Expose()
-  @Type(() => UserContribute)
-  @OneToMany(() => UserContribute, userContribute => userContribute.product,
+  @Type(() => CustomerRecommendedProduct)
+  @OneToMany(() => CustomerRecommendedProduct, customerContribute => customerContribute.product,
     { nullable: true })
-  userContributed: UserContribute[]
+  customerRecommendedProduct: CustomerRecommendedProduct[]
+
+  /**
+  * 商品被推荐用户们
+  */
+  @Expose()
+  @Type(() => OpenCollection)
+  @ManyToMany(() => OpenCollection, customer => customer.products,
+    { createForeignKeyConstraints: false, nullable: true })
+  // @JoinTable({
+  //   name: 'customer_recommended_products',
+  //   joinColumn: {
+  //     name: "product_id",
+  //     referencedColumnName: "id"
+  //   },
+  //   inverseJoinColumn: {
+  //     name: "open_collection_id",
+  //     referencedColumnName: "id"
+  //   }
+  // })
+  openCollections?: OpenCollection[]
+
+  /**
+   * 商品被推荐用户们
+   */
+  @Expose()
+  @Type(() => Customer)
+  @ManyToMany(() => Customer, customer => customer.customerRecommendedProducts,
+    { createForeignKeyConstraints: false, nullable: true })
+  // @JoinTable({
+  //   name: 'customer_recommended_products',
+  //   joinColumn: {
+  //     name: "product_id",
+  //     referencedColumnName: "id"
+  //   },
+  //   inverseJoinColumn: {
+  //     name: "customer_id",
+  //     referencedColumnName: "id"
+  //   }
+  // })
+  recommendedProductCustomers: Customer[]
 
   /**
    * 规格
    */
   @Expose()
-  @Type(() => ProductSpecification)
-  @OneToMany(() => ProductSpecification, productSpecification => productSpecification.product,
+  @Type(() => ProductSpecValue)
+  @OneToMany(() => ProductSpecValue, productSpec => productSpec.product,
     { nullable: true })
-  specifications?: ProductSpecification[]
+  specs?: ProductSpecValue[]
 
   /**
-   * 产品瑕疵
+   * 库存产品
    */
   @Expose()
-  @Type(() => ProductFlaw)
-  @OneToOne(() => ProductFlaw, productFlaw => productFlaw.product,
+  @Type(() => GoodsItem)
+  @OneToMany(() => GoodsItem, GoodsItem => GoodsItem.product,
     { nullable: true })
-  flaw?: ProductFlaw
+  goodsItems?: GoodsItem[]
+
+  // /**
+  //  * 电子商品型号或者'书籍'
+  //  */
+  // @Expose()
+  // @Column({ nullable: true })
+  // model?: string
 
   /**
-   * 电子商品型号或者'书籍'
+   * 已经售罄 stock
    */
   @Expose()
-  @Column({ nullable: true })
-  model?: string
-
-  /**
-   * 是否已经卖出
-   */
-  @Expose()
-  @Column({ default: false })
-  isSold: boolean
-
-  /**
-   * 售价
-   */
-  @Expose()
-  @Column()
-  price: number
+  @Column({ nullable: true, default: false, name: 'is_sold_out' })
+  isSoldOut: boolean = false
 
   /**
    * 原价
    */
   @Expose()
-  @Column()
+  @Column({ type: 'decimal', nullable: true, name: 'original_price' })
   originalPrice: number
+
+  /** 全新价格
+   */
+  @Expose()
+  @Column({ type: 'decimal', nullable: true, name: 'new_condition_price' })
+  newConditionPrice: number
 
   /**
    * 库存数量
    */
   @Expose()
-  @Column({ nullable: true })
+  @Column({ nullable: true, name: 'stock_num' })
   stockNum?: number
-
-  /**
-   * 是否有库存
-   */
-  @Expose()
-  @Column({ nullable: true, default: false })
-  stock?: boolean
-
-  /**
-   * 成色
-   */
-  @Expose()
-  @Type(() => String)
-  @Column({ type: "enum", enum: Condition, default: Condition.MEDIUM })
-  condition?: Condition
-
-  /**
-    * 拒绝理由
-    */
-  @Expose()
-  @Column({ nullable: true })
-  refusedReason?: string
 
   /**
    * 预计上架日期
    */
   @Expose()
-  @Column({ nullable: true })
+  @Column({ nullable: true, name: 'launch_date' })
   launchDate?: Date
 
   /**
-   * 是否发布 默认false
+   * 是否上架 默认false
    */
   @Expose()
-  @Column({ nullable: true, default: false })
-  isPublish?: boolean
-
-  /**
-   * 支付状态
-   */
-  paymentstatus: Paymentstatus
-  set setPaymentstatus(value: Paymentstatus) {
-    this.paymentstatus = value
-    if (value == Paymentstatus.BUYER_PAYS) {
-
-    }
-  }
-  paymentstatusDate: Date
-
-  /**
-   * 物流状态
-   */
-  logisticsStatus: LogisticsStatus
-
-  /**
-   * 商品状态
-   */
-  ProductStatus: ProductStatus
-
+  @Column({ nullable: true, default: false, name: 'is_published' })
+  isPublished?: boolean = false
 
   constructor(product: Partial<Product>) {
     super(product)

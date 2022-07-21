@@ -8,6 +8,14 @@ export enum CategoryType {
   BRAND = 'brand',
 }
 
+export enum BookTagType {
+  AUTHOR='author',
+  COLLECTION='collection',
+  CONTENT='content',
+  PRODUCER='producer',
+  series='series' //系列书籍
+}
+
 registerEnumType(CategoryType, {
   name: 'CategoryType'
 })

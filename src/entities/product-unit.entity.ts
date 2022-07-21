@@ -1,16 +1,35 @@
-import { Expose, plainToInstance, Type } from 'class-transformer'
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn, TableInheritance } from 'typeorm'
-import { Brand } from './brand.entity'
-import { Category } from './category.entity'
+import {
+  Expose,
+  plainToInstance,
+  Type,
+} from 'class-transformer'
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany, OneToOne,
+  PrimaryColumn,
+  TableInheritance,
+} from 'typeorm'
+
 import { IBase } from './interface/base.interface'
-import { ProductUnitCategory } from './product-unit-category.entity'
-import { Product } from './product.entity'
-import { Specification } from './specification.entity'
-import { Tag } from './tag.entity'
-import { Image } from './image.entity'
+import {
+  Brand,
+  Category,
+  Image,
+  Product,
+  ProductUnitSpec,
+  ProductUnitSpecTmpl,
+  Tag,
+} from './'
 
 /**
- * 产品单元 品类 同一品类有相同属性只是属性的值不同而已
+ * 产品单元 Standard Product Unit(SPU):标准化产品单元。
+ * iphone13 小米11 基督山伯爵
  */
 @Entity({
   name: 'product_units',
@@ -21,25 +40,32 @@ import { Image } from './image.entity'
 export class ProductUnit extends IBase<ProductUnit> {
 
   /**
-   * 产品单元的属性
+   * 产品单元的规格模板
    */
   @Expose()
-  @Type(() => Specification)
-  @ManyToMany(() => Specification, (specification) => specification.productUnit)
-  specifications: Specification[]
+  @Index("IDX_product_units_spec_emplate_id")
+  @ManyToOne(() => ProductUnitSpecTmpl, tmpl => tmpl.productUnit,
+    { createForeignKeyConstraints: false, nullable: true })
+  @JoinColumn({ name: 'product_unit_spec_tmpl_id' })
+  specTmpl: ProductUnitSpecTmpl
 
   /**
    * 产品单元的类型
    */
   @Expose()
-  @Type(() => ProductUnitCategory)
-  @ManyToOne(() => ProductUnitCategory, category => category.productUnit,
-    { nullable: true })
-  category?: ProductUnitCategory
+  @Type(() => Category)
+  @Index("IDX_product_units_category_id")
+  @ManyToOne(() => Category, category => category.productUnits,
+    { createForeignKeyConstraints: false, nullable: true })
+  @JoinColumn({ name: 'category_id' })
+  category?: Category
 
   @Expose()
   @Type(() => Brand)
-  @OneToMany(() => Brand, brand => brand.productUnit, { nullable: true })
+  @Index("IDX_product_units_brand_id")
+  @ManyToOne(() => Brand, brand => brand.productUnit,
+    { createForeignKeyConstraints: false, nullable: true })
+  @JoinColumn({ name: 'brand_id' })
   brand?: Brand
 
   /**
@@ -47,27 +73,53 @@ export class ProductUnit extends IBase<ProductUnit> {
    */
   @Expose()
   @Type(() => Product)
-  @OneToMany(() => Product, (product) => product.productUnit)
-  product: Product
+  @OneToMany(() => Product, (product) => product.productUnit, { nullable: true })
+  products?: Product[]
 
   @Expose()
   @Type(() => Tag)
   @ManyToMany(() => Tag, tag => tag.productUnit,
     { createForeignKeyConstraints: false, nullable: true })
-  tags?: Tag
+  @JoinTable({
+    name: 'product_units_tags',
+    joinColumn: {
+      name: "product_unit_id",
+      referencedColumnName: "id"
+    },
+    inverseJoinColumn: {
+      name: "tag_id",
+      referencedColumnName: "id"
+    }
+  })
+  tags?: Tag[]
 
+  /**
+   *  商品的介绍图片，并不是针对具体规格的图片
+   */
   @Expose()
   @Type(() => Image)
   @OneToMany(() => Image, image => image.productUnit)
   images: Image[]
+
+  @Expose()
+  @Index("IDX_product_units_name")
+  @Column()
+  name: string
+
+  @Expose()
+  @Index("IDX_product_units_origin_name")
+  @Column({ nullable: true, name: "origin_name" })
+  originalName: string
 
   /**
    * 出品方
    */
   // @Expose()
   // @Type(() => Producer)
+  // @Index("IDX_product_units_producer_id")
   // @ManyToOne(() => Producer, producer => producer.books,
   //   { createForeignKeyConstraints: false })
+  // @JoinColumn({name: 'producer_id'})
   // producer: Producer
 
   /**
@@ -75,7 +127,7 @@ export class ProductUnit extends IBase<ProductUnit> {
    */
   // @Expose()
   // @Type(() => Comment)
-  // @ManyToOne(() => Comment, comment => comment.topicBook,
+  // @OneToMany(() => Comment, comment => comment.topicBook,
   //   { createForeignKeyConstraints: false })
   // comments: Comment[]
 
@@ -83,9 +135,9 @@ export class ProductUnit extends IBase<ProductUnit> {
   //  * 同一商品被用户在多个推荐中提及
   //  */
   // @Expose()
-  // @Type(() => UserContribute)
-  // @OneToMany(() => UserContribute, userContribute => userContribute.book)
-  // userContributed: UserContribute[]
+  // @Type(() => CustomerContribute)
+  // @OneToMany(() => CustomerContribute, customerContribute => customerContribute.book)
+  // customerContributed: CustomerContribute[]
 
   // @Expose()
   // @Column()
@@ -161,6 +213,11 @@ export class ProductUnit extends IBase<ProductUnit> {
   // goodreadsRating?: number
 
 
+  /**
+   * 产品单元 Standard Product Unit(SPU):标准化产品单元。
+   * iphone13 小米11 基督山伯爵
+   * @param productUnit 
+   */
   constructor(productUnit: Partial<ProductUnit>) {
     super(productUnit)
 

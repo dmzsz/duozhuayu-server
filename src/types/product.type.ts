@@ -5,7 +5,7 @@ import { Expose, plainToInstance, Type } from 'class-transformer'
 import { Image } from './image.type'
 import { Brand } from './brand.type'
 import { Condition } from '@/shared/enums'
-import { UserContribute } from './user-contribute.type'
+import { CustomerContribute } from './customer-contribute.type'
 import { ProductFlaw } from './product-flaw.type'
 import { Category } from './category.type'
 
@@ -48,9 +48,9 @@ export class Product extends IBase<Product> {
      * 同一商品被用户在多个推荐中提及
      */
     @Expose()
-    @Type(() => UserContribute)
-    @Field(type => [UserContribute], { nullable: true })
-    userContributed: UserContribute[]
+    @Type(() => CustomerContribute)
+    @Field(type => [CustomerContribute], { nullable: true })
+    customerContributed: CustomerContribute[]
 
     /**
      * 售价
@@ -81,7 +81,7 @@ export class Product extends IBase<Product> {
     stock?: boolean
 
     /**
-     * 成色
+     * 品相
      */
     @Expose()
     @Field(() => Condition, { defaultValue: Condition.MEDIUM })

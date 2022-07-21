@@ -1,3 +1,4 @@
+import { LockProduct } from '@/entities';
 import { registerEnumType } from '@nestjs/graphql';
 
 export enum ProductType {
@@ -11,8 +12,72 @@ export enum ProductType {
  */
 export enum Condition {
     UNKNOWN = 'unknown',
+    /**
+     * 全新
+     */
+    NEW = 'new',
+    /**
+     * 品相良好
+     */
     FINE = 'fine',
+    /**
+     * 有破损 详见FlawReasons
+     */
     MEDIUM = 'medium'
+}
+
+/**
+ * 破损
+ */
+export enum FlawReasons {
+    /**
+     * 可拆卸外封套缺失
+     */
+    COVER_LOST = "cover_lost",
+    /**
+     * 轻度污渍
+     */
+    LIGHTLY_DIRTY = "lightly_dirty",
+    /**
+     * 轻度污渍 发霉
+     */
+    LIGHTLY_MILDEW = "lightly_mildew",
+    /**
+    * 轻度磨损或破损
+    */
+    LIGHTLY_BREAKAGE = "lightly_breakage",
+    /**
+     * 磨损或破损 划伤
+     */
+    LIGHTLY_SCRATCHED = "lightly_scratched",
+    /**
+     * 轻度折痕
+     */
+    LIGHTLY_FOLDED = "lightly_folded",
+    /**
+     * 有划线或标注
+     */
+    MARKS = "marks",
+    /**
+     * 附着胶带或标签
+     */
+    "NON-REMOVABLE_LABELS" = "non-removable_labels",
+    /**
+     * 缺失附件（CD）
+     */
+    ATTACHMENT_LOST = "attachment_lost",
+    /**
+     * 泛黄或褪色
+     */
+    AGING = "aging",
+    /**
+     * 印刷问题
+     */
+    QUALITY_ISSUES = "quality_issues",
+    /**
+     * 变形
+     */
+    LIGHTLY_DEFORM = "lightly_deform"
 }
 
 /**
@@ -180,93 +245,133 @@ export enum gameCassette {
      */
     AREA = '地区',
 }
-/**
- * 支付状态
- * 
- * BUYER_PAYS 买家付款 
- * BUYER_CONFIRMS_PAYMENT 买家确认付款
- * PAY_TO_SELLER 支付给卖家
- * REFUND_TO_BUYER 退款给买家
- */
-export enum Paymentstatus {
+
+
+export enum LockProductPaySatus {
     /**
-     * 买家付款
+     * 等待支付
      */
-    BUYER_PAYS = 'buyer_pays',
+    PENDING_PAYMENT,
     /**
-    * 买家确认付款
-    */
-    BUYER_CONFIRMS_PAYMENT = 'buyer_confirms_payment',
-    /**
-     * 支付给卖家
+     * 以付款
      */
-    PAY_TO_SELLER = 'pay_to_seller',
+    Paid,
     /**
-     * 退款给买家
+     * 取消或者过期 扣款了
      */
-    REFUND_TO_BUYER = 'refund_to_buyer',
+    Refunded
 }
+
 /**
  * 商品状态
  */
 export enum ProductStatus {
     /**
-     * 验卖家货中
+     * 已拍下
      */
-    UNDER_INSPECTION = 'under_inspection',
+    BOUGHT = 0,
     /**
-     * 出售中
+     * 待付款
      */
-    SALE = 'sale',
+    PAYMENT_PENDING,
+    /**
+     * 已付款
+     */
+    PAID,
+    /**
+     * 已发货
+     */
+    SALE,
     /**
      * 交易完成
      */
-    SOLD = 'sold'
+    TRANSACTION_COMPLETION,
+    /**
+     * 待评价
+     */
+    COMMENTED,
+}
+/**
+ * 审查状态
+ */
+export enum CensoredStatus {
+    /**
+     * 正在审核
+     */
+    UNDER_REVIEW = 'under_review',
+    /**
+     * 已被驳回
+     */
+    REJECTED = 'rejected',
+    /**
+     * 通过
+     */
+    PASSED = 'passed'
 }
 
 /**
- * 物流状态
+ * 商品单位
  */
-export enum LogisticsStatus {
+export enum ProductUnit {
     /**
-     *  等待卖家发货
+     * 包
      */
-    WAITING_SELLER = 'waiting_seller',
+    package,
     /**
-     * 卖家发货
+     * 块
      */
-    SELLER = 'platform_receipt',
+    piece,
     /**
-     * 平台收到卖家商品
+     *  本
      */
-    PLATFORM_RECEIVES_SELLER = 'platform_receives_seller',
+    ben,
     /**
-     * 退货给卖家
+     * 双，对
      */
-    RETURN_TO_SELLER = 'return_to_seller',
+    pair,
     /**
-     * 卖家签收
+     * 台，套，架
      */
-    SELLER_SIGNATURE = 'seller_signature',
+    set,
     /**
-     * 发货给买家
+     * 条
      */
-    SHIP_TO_BUYER = 'ship_to_buyer',
+    bar,
     /**
-     * 买家签收
+     * 	张
      */
-    BUYER_SIGNED = 'buyer_signed',
+    sheet,
     /**
-     * 买家退货
+     * 袋
      */
-    BUYER_RETURNS = 'buyer_returns',
+    bag,
     /**
-     * 平台收到买家退货
+     * 件，辆
      */
-    PLATFORM_RECEIVES_BUYER = 'platform_receives_buyer',
+    unit,
 }
 
-
+/**
+ * 锁定产品的状态
+ */
+export enum LockProductStatus {
+    /**
+     * 可用
+     */
+    AVAILABLE,
+    /**
+     * 没有使用过期了
+     */
+    EXPIRED,
+    /**
+     * 取消了
+     */
+    CANCELLED,
+    /**
+     * 购买了
+     */
+    BOUGHT,
+}
 registerEnumType(ProductType, {
     name: 'ProductType'
 })
@@ -288,12 +393,12 @@ registerEnumType(KindleSpecificationLabel, {
 registerEnumType(gameCassette, {
     name: 'gameCassette'
 })
-registerEnumType(Paymentstatus, {
-    name: 'Paymentstatus'
-})
 registerEnumType(ProductStatus, {
     name: 'ProductStatus'
 })
-registerEnumType(LogisticsStatus, {
-    name: 'LogisticsStatus'
+registerEnumType(ProductStatus, {
+    name: 'CensoredStatus'
+})
+registerEnumType(LockProductPaySatus, {
+    name: 'LockProductPaySatus'
 })

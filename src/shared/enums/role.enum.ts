@@ -8,11 +8,11 @@ export enum RoleOptions {
   /**
    * 普通用户
    */
-  USER = 'user',
+  USER = 'customer',
   /**
    * vip用户
    */
-  VIP_USER = 'vip_user',
+  VIP_USER = 'vip_customer',
   /**
   * 普通职员
   */
@@ -32,6 +32,23 @@ export enum RoleOptions {
 }
 
 
+/**
+ * 角色选项
+ */
+export enum RoleGroupType {
+  /**
+   * 不考虑 职位 部门 组织 约束
+   */
+  general = 0,
+  /**
+   * 权限低于 职位 部门 组织
+   */
+  grade
+}
+
 registerEnumType(RoleOptions, {
   name: 'RoleOptions',
+})
+registerEnumType(RoleGroupType, {
+  name: 'RoleGroupType',
 })

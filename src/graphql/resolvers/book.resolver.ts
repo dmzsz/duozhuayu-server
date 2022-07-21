@@ -19,7 +19,7 @@ export class BookResolver extends BaseResolver(BookObjectType) {
 	 */
 	@Query(() => [BookObjectType])
 	async stockBook(): Promise<Book[]> {
-		return await getRepository(Book).find({ stock: true })
+		return await getRepository(Book).find({ isSoldOut: true })
 	}
 
 	@Query(() => [BookCategoryObjectType])
@@ -33,7 +33,7 @@ export class BookResolver extends BaseResolver(BookObjectType) {
 	 * @returns 
 	 */
 	async outOfStockBook(): Promise<Book[]> {
-		return await getRepository(Book).find({ stock: false })
+		return await getRepository(Book).find({ isSoldOut: false })
 	}
 
 

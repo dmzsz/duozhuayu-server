@@ -9,9 +9,9 @@
 // 		const { resolve = defaultFieldResolver } = field
 
 // 		field.resolve = function (...args) {
-// 			const { currentUser } = args[2]
+// 			const { currentCustomer } = args[2]
 
-// 			if (!currentUser) {
+// 			if (!currentCustomer) {
 // 				throw new AuthenticationError(
 // 					'Authentication token is invalid, please try again.'
 // 				)

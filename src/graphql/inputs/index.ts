@@ -1,2 +1,2 @@
 // export * from './email.input'
-// export * from './user.input'
+// export * from './customer.input'

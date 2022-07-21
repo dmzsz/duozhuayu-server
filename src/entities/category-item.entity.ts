@@ -1,11 +1,22 @@
-import { Expose, plainToInstance, Type } from 'class-transformer'
-import { Column, Entity, OneToMany, OneToOne, PrimaryColumn, TableInheritance, Tree, TreeChildren, TreeParent, Unique } from 'typeorm'
+import {
+    Expose,
+    plainToInstance,
+    Type
+} from 'class-transformer'
+import {
+    Column,
+    Entity,
+    OneToMany,
+    PrimaryColumn
+} from 'typeorm'
+
+import { IBaseExcludeId } from './interface/base-exclude-id.interface'
 import { IBase } from './interface/base.interface'
 import { CategoryType } from '@/shared/enums'
-import { ProductUnit } from './product-unit.entity'
-import { Category } from './category.entity'
-import category from '@/seed/book-category'
-import { IBaseExcludeId } from './interface/base-exclude-id.interface'
+import {
+    Category,
+    ProductUnit,
+} from '.'
 
 @Entity({
     name: 'category_items',
@@ -17,8 +28,9 @@ export class CategoryItem extends IBaseExcludeId<CategoryItem> {
 
     @Expose()
     @Type(() => Category)
-    @OneToMany(() => Category, category => category.categoryItem)
-    category?: Category
+    @OneToMany(() => Category, category => category.categoryItem,
+        { nullable: true })
+    categories?: Category[]
 
     @Expose()
     @PrimaryColumn()

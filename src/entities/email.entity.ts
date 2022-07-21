@@ -1,8 +1,22 @@
-import { Entity, Column, ColumnType, OneToMany, ManyToOne } from 'typeorm';
-import { Expose, plainToClass, plainToInstance, Type } from 'class-transformer'
-import { IBase } from './interface/base.interface'
-import { User } from './user.entity';
+import {
+	Expose,
+	plainToClass,
+	plainToInstance,
+	Type,
+} from 'class-transformer'
+import {
+	Column,
+	ColumnType,
+	Entity,
+	Index,
+	JoinColumn,
+	ManyToOne,
+	OneToMany,
+} from 'typeorm';
+
 import { EmailType } from '@/shared/enums';
+import { IBase } from './interface/base.interface'
+import { Customer } from './';
 
 @Entity({
 	name: 'emails',
@@ -16,27 +30,32 @@ export class Email extends IBase<Email> {
    * 发送者
    */
 	@Expose()
-	@Type(() => User)
-	@ManyToOne(() => User, user => user.sendEmails,
-		{ createForeignKeyConstraints: false })
-	fromUser: User
+	@Type(() => Customer)
+	@Index("IDX_emails_from_customer_id")
+	@ManyToOne(() => Customer, customer => customer.sendEmails,
+		{ createForeignKeyConstraints: false, nullable: true })
+	@JoinColumn({ name: 'from_customer_id' })
+	fromCustomer?: Customer
 
 	/**
    * 接受者
    */
 	@Expose()
-	@Type(() => User)
-	@ManyToOne(() => User, user => user.receiveEmails,
-		{ createForeignKeyConstraints: false })
-	toUser: User
+	@Type(() => Customer)
+	@Index("IDX_emails_to_customer_id")
+	@ManyToOne(() => Customer, customer => customer.receiveEmails,
+		{ createForeignKeyConstraints: false, nullable: true })
+	@JoinColumn({ name: 'to_customer_id' })
+	toCustomer?: Customer
 
 	@Expose()
 	@Column({ nullable: true, type: 'enum', enum: EmailType, default: EmailType.VERIFY_EMAIL }) // 自动识别为varchar(255)
-	type: EmailType
+	type: EmailType = EmailType.VERIFY_EMAIL
 
 	@Expose()
 	@Column({ nullable: true, default: false })
-	isOpened: boolean
+	@JoinColumn({ name: 'is_opened' })
+	isOpened: boolean = false
 
 	constructor(email?: Partial<Email>) {
 		super(email)

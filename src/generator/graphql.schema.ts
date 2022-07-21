@@ -32,7 +32,7 @@ export enum Type {
     FORGOT_PASSWORD = "FORGOT_PASSWORD"
 }
 
-export enum UserType {
+export enum CustomerType {
     BASIC = "BASIC",
     PREMIUM = "PREMIUM"
 }
@@ -83,14 +83,14 @@ export class CreateRoleInput {
 
 export class CreateRoomInput {
     title: string;
-    userIds: string[];
+    customerIds: string[];
 }
 
 export class CreateStoreInput {
     name: string;
 }
 
-export class CreateUserInput {
+export class CreateCustomerInput {
     firstName: string;
     lastName: string;
     email: string;
@@ -98,8 +98,8 @@ export class CreateUserInput {
     gender: Gender;
 }
 
-export class CreateUserRoleInput {
-    userId: string;
+export class CreateCustomerRoleInput {
+    customerId: string;
     roleId: string;
 }
 
@@ -107,7 +107,7 @@ export class FileInput {
     filename?: string;
 }
 
-export class LoginUserInput {
+export class LoginCustomerInput {
     email: string;
     password: string;
 }
@@ -118,7 +118,7 @@ export class PermissionInput {
 }
 
 export class RecordInput {
-    User?: UserInput;
+    Customer?: CustomerInput;
     File?: FileInput;
 }
 
@@ -144,14 +144,14 @@ export class UpdateNodeInput {
     category?: NodeCategory;
 }
 
-export class UpdateUserInput {
+export class UpdateCustomerInput {
     firstName: string;
     lastName: string;
     password: string;
     gender: Gender;
 }
 
-export class UserInput {
+export class CustomerInput {
     firstName?: string;
     lastName?: string;
     email?: string;
@@ -186,7 +186,7 @@ export class Department {
 
 export class Email {
     _id: string;
-    userId: string;
+    customerId: string;
     type: Type;
     isOpened: boolean;
     createdAt: number;
@@ -194,7 +194,7 @@ export class Email {
 }
 
 export class Facebook {
-    _id?: string;
+    _id?: number;
     token?: string;
     name?: string;
     email?: string;
@@ -217,7 +217,7 @@ export class Form {
 }
 
 export class Google {
-    _id?: string;
+    _id?: number;
     token?: string;
     name?: string;
     email?: string;
@@ -228,7 +228,7 @@ export class Job {
 }
 
 export class KPI {
-    _id?: string;
+    _id?: number;
     month?: number;
     belongTo?: string;
     spentTotal?: number;
@@ -240,7 +240,7 @@ export class KPI {
 }
 
 export class Link {
-    userStory?: string;
+    customerStory?: string;
     wireframe?: string;
     dbDiagram?: string;
     gitlab?: string;
@@ -260,7 +260,7 @@ export class Message {
     _id: string;
     text?: string;
     roomId: string;
-    createdBy?: User;
+    createdBy?: Customer;
     createdAt: number;
     updatedAt: number;
 }
@@ -294,7 +294,7 @@ export abstract class IMutation {
 
     abstract deleteNode(_id: string): boolean | Promise<boolean>;
 
-    abstract pushNotification(userIds: string[], label: string): Notification | Promise<Notification>;
+    abstract pushNotification(customerIds: string[], label: string): Notification | Promise<Notification>;
 
     abstract oauthGooglePlus(accessToken: string): LoginResponse | Promise<LoginResponse>;
 
@@ -324,25 +324,25 @@ export abstract class IMutation {
 
     abstract createTree(input?: JSON): string | Promise<string>;
 
-    abstract updateTree(input?: JSON, _id?: string): boolean | Promise<boolean>;
+    abstract updateTree(input?: JSON, _id?: number): boolean | Promise<boolean>;
 
-    abstract createUser(input: CreateUserInput): User | Promise<User>;
+    abstract createCustomer(input: CreateCustomerInput): Customer | Promise<Customer>;
 
-    abstract updateUser(_id: string, input: UpdateUserInput): boolean | Promise<boolean>;
+    abstract updateCustomer(_id: string, input: UpdateCustomerInput): boolean | Promise<boolean>;
 
     abstract updateAvatar(_id: string, file: Upload): boolean | Promise<boolean>;
 
-    abstract deleteUser(_id: string): boolean | Promise<boolean>;
+    abstract deleteCustomer(_id: string): boolean | Promise<boolean>;
 
-    abstract deleteUsers(): boolean | Promise<boolean>;
+    abstract deleteCustomers(): boolean | Promise<boolean>;
 
     abstract verifyEmail(emailToken: string): boolean | Promise<boolean>;
 
-    abstract login(input: LoginUserInput): LoginResponse | Promise<LoginResponse>;
+    abstract login(input: LoginCustomerInput): LoginResponse | Promise<LoginResponse>;
 
     abstract refreshToken(refreshToken: string): RefreshTokenResponse | Promise<RefreshTokenResponse>;
 
-    abstract lockAndUnlockUser(_id: string, reason: string): boolean | Promise<boolean>;
+    abstract lockAndUnlockCustomer(_id: string, reason: string): boolean | Promise<boolean>;
 
     abstract changePassword(_id: string, currentPassword: string, password: string): boolean | Promise<boolean>;
 
@@ -350,18 +350,18 @@ export abstract class IMutation {
 
     abstract resetPassword(resetPasswordToken: string, password: string): boolean | Promise<boolean>;
 
-    abstract createSubscription(source: string, ccLast4: string): User | Promise<User>;
+    abstract createSubscription(source: string, ccLast4: string): Customer | Promise<Customer>;
 
-    abstract changeCreditCard(source: string, ccLast4: string): User | Promise<User>;
+    abstract changeCreditCard(source: string, ccLast4: string): Customer | Promise<Customer>;
 
-    abstract validateUser(text: string, input: CreateUserInput): boolean | Promise<boolean>;
+    abstract validateCustomer(text: string, input: CreateCustomerInput): boolean | Promise<boolean>;
 
-    abstract createUserRole(input: CreateUserRoleInput): UserRole | Promise<UserRole>;
+    abstract createCustomerRole(input: CreateCustomerRoleInput): CustomerRole | Promise<CustomerRole>;
 }
 
 export class Node {
     _id: string;
-    parentId?: string;
+    parentId?: number;
     name?: string;
     category?: NodeCategory;
     company?: Company;
@@ -399,7 +399,7 @@ export class Position {
 }
 
 export class Project {
-    _id?: string;
+    _id?: number;
     name?: string;
     idProjectType?: string;
     description?: string;
@@ -413,7 +413,7 @@ export class Project {
 }
 
 export class ProjectType {
-    _id?: string;
+    _id?: number;
     name?: string;
     description?: string;
     ratio?: number;
@@ -462,19 +462,19 @@ export abstract class IQuery {
 
     abstract hello(): string | Promise<string>;
 
-    abstract me(): User | Promise<User>;
+    abstract me(): Customer | Promise<Customer>;
 
-    abstract users(offset?: number, limit?: number): User[] | Promise<User[]>;
+    abstract customers(offset?: number, limit?: number): Customer[] | Promise<Customer[]>;
 
-    abstract user(_id: string): User | Promise<User>;
+    abstract customer(_id: string): Customer | Promise<Customer>;
 
     abstract search(conditions: SearchInput): Result[] | Promise<Result[]>;
 
-    abstract searchUser(userIds?: string[]): UserResult | Promise<UserResult>;
+    abstract searchCustomer(customerIds?: string[]): CustomerResult | Promise<CustomerResult>;
 
     abstract today(): Date | Promise<Date>;
 
-    abstract userRoles(): UserRole[] | Promise<UserRole[]>;
+    abstract customerRoles(): CustomerRole[] | Promise<CustomerRole[]>;
 }
 
 export class RefreshTokenResponse {
@@ -494,7 +494,7 @@ export class Role {
 export class Room {
     _id: string;
     title: string;
-    users: User[];
+    customers: Customer[];
     messages?: Message[];
     createdAt: number;
     updatedAt: number;
@@ -513,11 +513,11 @@ export abstract class ISubscription {
 
     abstract newNotification(): Notification | Promise<Notification>;
 
-    abstract newUser(): User | Promise<User>;
+    abstract newCustomer(): Customer | Promise<Customer>;
 }
 
 export class Task {
-    _id?: string;
+    _id?: number;
     name?: string;
     dueDate?: number;
     rulePenalty?: string;
@@ -536,7 +536,7 @@ export class Task {
 }
 
 export class TaskItem {
-    _id?: string;
+    _id?: number;
     comment?: string;
     idTask?: string;
     startAt?: number;
@@ -545,11 +545,11 @@ export class TaskItem {
 }
 
 export class Tree {
-    _id?: string;
+    _id?: number;
     treeData?: JSON;
 }
 
-export class User {
+export class Customer {
     _id: string;
     local?: Local;
     google?: Google;
@@ -568,26 +568,26 @@ export class User {
     reason: string;
     isActive: boolean;
     stripeId?: string;
-    type: UserType;
+    type: CustomerType;
     ccLast4?: string;
     createdAt: number;
     updatedAt: number;
 }
 
-export class UserRole {
+export class CustomerRole {
     _id: string;
-    userId: string;
+    customerId: string;
     roleId: string;
     createdAt: number;
     updatedAt: number;
 }
 
-export class Users {
-    users?: User[];
+export class Customers {
+    customers?: Customer[];
 }
 
 export type JSON = any;
 export type JSONObject = any;
 export type Upload = any;
-export type Result = User | File;
-export type UserResult = User | Users;
+export type Result = Customer | File;
+export type CustomerResult = Customer | Customers;

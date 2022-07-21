@@ -12,7 +12,7 @@ import { configLog } from './config/log.config'
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor'
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor'
 import { ValidationPipe } from './common/pipes/validation.pipe'
-import Seed from "@/seed"
+import Seed from "../seed"
 
 declare const module: any
 

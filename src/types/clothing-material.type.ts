@@ -1,9 +1,5 @@
-import { Producer, Tag, UserContribute } from '@/entities';
-import { Gender } from '@/shared/enums';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Expose, plainToInstance, Type } from 'class-transformer';
-import { Image } from './image.type'
-import { Product } from './product.type';
 
 /**
  * 衣服面料

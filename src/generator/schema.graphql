@@ -7,10 +7,10 @@ directive @upper on FIELD_DEFINITION
 type Auth {
   """JWT access token"""
   accessToken: JWT!
+  customer: Customer!
 
   """JWT refresh token"""
   refreshToken: JWT!
-  user: User!
 }
 
 type Book implements IBase & IResource {
@@ -22,6 +22,7 @@ type Book implements IBase & IResource {
   createdAt: Date!
   currencyCode: String!
   currencySymbol: String!
+  customerContributed: [CustomerContribute!]
   description: String!
   doubanRating: Int!
   goodreadsRating: Int!
@@ -44,7 +45,6 @@ type Book implements IBase & IResource {
   tags: [Tag!]
   title: String!
   updatedAt: Date!
-  userContributed: [UserContribute!]
 }
 
 type BookCategory implements IBase & IResource {
@@ -66,7 +66,7 @@ type BookComment implements IBase & IResource {
   book: Book!
   children: [Comment!]!
   createdAt: Date!
-  createdUser: User!
+  createdCustomer: Customer!
   goodNum: Int!
   id: ID!
   isDelete: Boolean!
@@ -108,6 +108,7 @@ type Clothing implements IBase & IResource {
   comments: [ClothingComment!]
   condition: Condition!
   createdAt: Date!
+  customerContributed: [CustomerContribute!]
   flaw: ClothingFlaw
   gender: Gender
   id: ID!
@@ -125,7 +126,6 @@ type Clothing implements IBase & IResource {
   stockNum: Int
   tags: [Tag!]
   updatedAt: Date!
-  userContributed: [UserContribute!]
 }
 
 type ClothingComment implements IBase & IResource {
@@ -133,7 +133,7 @@ type ClothingComment implements IBase & IResource {
   children: [Comment!]!
   clothing: Clothing!
   createdAt: Date!
-  createdUser: User!
+  createdCustomer: Customer!
   goodNum: Int!
   id: ID!
   isDelete: Boolean!
@@ -192,7 +192,7 @@ type Comment implements IBase & IResource {
   badNum: Int!
   children: [Comment!]!
   createdAt: Date!
-  createdUser: User!
+  createdCustomer: Customer!
   goodNum: Int!
   id: ID!
   isDelete: Boolean!
@@ -206,21 +206,69 @@ type Comment implements IBase & IResource {
 enum Condition {
   FINE
   MEDIUM
+  NEW
   UNKNOWN
 }
 
-input CreateEmailInput {
-  type: EmailType!
-  userId: String!
-}
-
-input CreateUserInput {
+input CreateCustomerInput {
   email: String = ""
   firstName: String = ""
   gender: Gender
   lastName: String = ""
   name: String = ""
   password: String!
+}
+
+input CreateEmailInput {
+  customerId: String!
+  type: EmailType!
+}
+
+type Customer implements IBase & IResource {
+  avatar: String
+  books: [Book!]
+  clothings: [Clothing!]
+  comments: [Comment!]
+  createdAt: Date!
+  customerContributes: [CustomerContribute!]
+  electronics: [Electronics!]
+  email: String
+  firstName: String
+  gender: Gender
+  id: ID!
+  isActive: Boolean
+  isDelete: Boolean!
+  isLocked: Boolean
+  isOnline: Boolean
+  isVerified: Boolean
+  lastName: String
+  name: String
+  openCollectionProposer: [OpenCollection!]
+  openid: String
+  password: String
+  reason: String
+  receiveEmails: [Email!]
+  resetPasswordExpires: Int
+  resetPasswordToken: String
+  roleNames: [String!]!
+  roles: Role
+  sendEmails: [Email!]
+  session_key: String
+  shoppingCart: ShoppingCart
+  unionid: String
+  updatedAt: Date!
+}
+
+type CustomerContribute implements IBase & IResource {
+  contributor: Customer!
+  createdAt: Date!
+  id: ID!
+  isDelete: Boolean!
+  openCollection: OpenCollection!
+  product: Product!
+  reason: String!
+  type: String!
+  updatedAt: Date!
 }
 
 """Date custom scalar type"""
@@ -230,6 +278,7 @@ type Electronics implements IBase & IResource {
   brand: Brand
   condition: Condition!
   createdAt: Date!
+  customerContributed: [CustomerContribute!]
   description: String!
   flaw: ProductFlaw
   id: ID!
@@ -244,16 +293,15 @@ type Electronics implements IBase & IResource {
   stockNum: Int
   tags: [Tag!]
   updatedAt: Date!
-  userContributed: [UserContribute!]
 }
 
 type Email implements IBase & IResource {
   createdAt: Date!
-  fromUser: User!
+  fromCustomer: Customer!
   id: ID!
   isDelete: Boolean!
   isOpened: Boolean!
-  toUser: User!
+  toCustomer: Customer!
   type: EmailType!
   updatedAt: Date!
 }
@@ -329,24 +377,24 @@ type KindleSpecification {
 
 type Mutation {
   createEmail(input: CreateEmailInput!): Email!
-  createLocalUser(user: CreateUserInput!): User!
+  createLocalCustomer(customer: CreateCustomerInput!): Customer!
   loginLocal: Token!
   openEmail(id: String!): Boolean!
   refreshToken(token: JWT!): Token!
-  signup(data: CreateUserInput!): Auth!
-  updateUser(data: UpdateUserInput!): User!
+  signup(data: CreateCustomerInput!): Auth!
+  updateCustomer(data: UpdateCustomerInput!): Customer!
 }
 
 type OpenCollection implements IBase & IResource {
-  books: [UserContribute!]!
-  contributors: [UserContribute!]!
+  books: [CustomerContribute!]!
+  contributors: [CustomerContribute!]!
   createdAt: Date!
+  customerContributes: [CustomerContribute!]!
   id: ID!
   isDelete: Boolean!
   openCollectionImage: OpenCollectionImage!
-  proposer: User!
+  proposer: Customer!
   updatedAt: Date!
-  userContributes: [UserContribute!]!
 }
 
 type OpenCollectionImage implements File & IBase & IResource {
@@ -377,6 +425,7 @@ type Product implements IBase & IResource {
   brand: Brand
   condition: Condition!
   createdAt: Date!
+  customerContributed: [CustomerContribute!]
   id: ID!
   images: [Image!]
   isDelete: Boolean!
@@ -387,7 +436,6 @@ type Product implements IBase & IResource {
   stockNum: Int
   tags: [Tag!]
   updatedAt: Date!
-  userContributed: [UserContribute!]
 }
 
 type ProductFlaw implements IBase & IResource {
@@ -406,22 +454,22 @@ enum ProductType {
 }
 
 type Query {
-  allUser: [User!]!
+  allCustomer: [Customer!]!
   bookCategories: [BookCategory!]!
   emails: [Email!]!
   findAllBook: [Book!]!
   findAllEmail: [Email!]!
-  findUser: User!
+  findCustomer: Customer!
   stockBook: [Book!]!
 }
 
 type Role implements IBase & IResource {
   createdAt: Date!
+  customers: [Customer!]!
   id: ID!
   isDelete: Boolean!
   name: String!
   updatedAt: Date!
-  users: [User!]!
 }
 
 type ShoppingCart implements IBase & IResource {
@@ -450,58 +498,11 @@ type Token {
   refreshToken: JWT!
 }
 
-input UpdateUserInput {
+input UpdateCustomerInput {
   email: String = ""
   firstName: String = ""
   gender: Gender
   lastName: String = ""
   name: String = ""
   password: String
-}
-
-type User implements IBase & IResource {
-  avatar: String
-  books: [Book!]
-  clothings: [Clothing!]
-  comments: [Comment!]
-  createdAt: Date!
-  electronics: [Electronics!]
-  email: String
-  firstName: String
-  gender: Gender
-  id: ID!
-  isActive: Boolean
-  isDelete: Boolean!
-  isLocked: Boolean
-  isOnline: Boolean
-  isVerified: Boolean
-  lastName: String
-  name: String
-  openCollectionProposer: [OpenCollection!]
-  openid: String
-  password: String
-  reason: String
-  receiveEmails: [Email!]
-  resetPasswordExpires: Int
-  resetPasswordToken: String
-  roleNames: [String!]!
-  roles: Role
-  sendEmails: [Email!]
-  session_key: String
-  shoppingCart: ShoppingCart
-  unionid: String
-  updatedAt: Date!
-  userContributes: [UserContribute!]
-}
-
-type UserContribute implements IBase & IResource {
-  contributor: User!
-  createdAt: Date!
-  id: ID!
-  isDelete: Boolean!
-  openCollection: OpenCollection!
-  product: Product!
-  reason: String!
-  type: String!
-  updatedAt: Date!
 }

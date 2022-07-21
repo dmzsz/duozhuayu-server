@@ -1,13 +1,19 @@
 
-import { Expose, Type } from 'class-transformer'
-import { Column, PrimaryColumn } from 'typeorm'
+import {
+  Expose,
+  Type,
+} from 'class-transformer'
+import {
+  Column,
+  Index,
+  PrimaryColumn,
+} from 'typeorm'
 
 export abstract class IResource {
 
   @Expose()
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'bigint' })
   id?: string
-
 
   @Expose()
   @Column()

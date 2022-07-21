@@ -1,9 +1,28 @@
-import { Expose, plainToInstance, Type } from 'class-transformer'
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from 'typeorm'
+import {
+  Expose,
+  plainToInstance,
+  Type,
+} from 'class-transformer'
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm'
+
 import { IBase } from './interface/base.interface'
-import { Image } from './image.entity'
-import { User } from './user.entity'
-import { UserContribute } from './user-contribute.entity'
+import {
+  Image,
+  Customer,
+  CustomerRecommendedProduct,
+  Product,
+} from './'
 
 /**
  * 书单
@@ -15,46 +34,53 @@ import { UserContribute } from './user-contribute.entity'
   }
 })
 export class OpenCollection extends IBase<OpenCollection> {
-  
+
   /**
    * 提议者
    */
   @Expose()
-  @Type(() => User)
-  @ManyToOne(() => User, user => user.openCollectionProposer,
-    { createForeignKeyConstraints: false })
-  proposer?: User
+  @Type(() => Customer)
+  @Index("IDX_open_collections_proposer_id")
+  @ManyToOne(() => Customer, customer => customer.openCollectionProposer,
+    { createForeignKeyConstraints: false, nullable: true })
+  @JoinColumn({ name: 'proposer_id' })
+  proposer?: Customer
 
   /**
-   * 贡献者
+   * 推荐的商品
    */
   @Expose()
-  @Type(() => UserContribute)
-  @OneToMany(() => UserContribute, userContribute => userContribute.contributor)
-  contributors?: UserContribute[]
-
-  /**
-   * 推荐图书
-   */
-  @Expose()
-  @Type(() => UserContribute)
-  @OneToMany(() => UserContribute, userContribute => userContribute.product)
-  books: UserContribute[]
+  @Type(() => Product)
+  @ManyToMany(() => Product, product => product.recommendedProductCustomers,
+    { createForeignKeyConstraints: false, nullable: true })
+  // @JoinTable({
+  //   name: 'customer_recommended_products',
+  //   joinColumn: {
+  //     name: "open_collection_id",
+  //     referencedColumnName: "id"
+  //   },
+  //   inverseJoinColumn: {
+  //     name: "product_id",
+  //     referencedColumnName: "id"
+  //   }
+  // })
+  products: Product[]
 
   /**
    * 用户推荐
    */
   @Expose()
-  @OneToMany(() => UserContribute, userContribute => userContribute.openCollection)
-  userContributes: UserContribute[]
+  @OneToMany(() => CustomerRecommendedProduct, customerContribute => customerContribute.openCollection)
+  customerContributes: CustomerRecommendedProduct[]
 
   @Expose()
   @Type(() => Image)
-  @OneToOne(() => Image, image => image.openCollection)
+  @OneToOne(() => Image, image => image.openCollection,
+    { createForeignKeyConstraints: false })
   openCollectionImage: Image
 
   @Expose()
-  @Column()
+  @Column({ nullable: true, name: 'contributors_count' })
   contributorsCount: number
 
   @Expose()
@@ -62,7 +88,7 @@ export class OpenCollection extends IBase<OpenCollection> {
   name: string
 
   @Expose()
-  @Column({ nullable: true })
+  @Column({ nullable: true, name: 'mask_color' })
   maskColor?: string
 
   @Expose()

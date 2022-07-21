@@ -2,7 +2,7 @@ import { IBase } from './interface/base.interface';
 import { EmailType } from '@/shared/enums';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Expose, plainToClass, plainToInstance, Type } from 'class-transformer';
-import { User } from './user.type';
+import { Customer } from './customer.type';
 
 @ObjectType({
     implements: () => [IBase],
@@ -13,17 +13,17 @@ export class Email extends IBase<Email> {
      * 发送者
     */
     @Expose()
-    @Type(() => User)
-    @Field(() => User)
-    fromUser: User
+    @Type(() => Customer)
+    @Field(() => Customer)
+    fromCustomer: Customer
 
     /**
      * 接受者
      */
     @Expose()
-    @Type(() => User)
-    @Field(() => User)
-    toUser: User
+    @Type(() => Customer)
+    @Field(() => Customer)
+    toCustomer: Customer
 
 
     @Expose()

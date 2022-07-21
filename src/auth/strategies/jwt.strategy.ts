@@ -82,8 +82,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
    *        strategy = Object.create(prototype)
    *      }
    *      // 把jwt策略里面绑定处理方法, 并不影响其他jwt策略，因为里面有不同的options和callback passport.authenticate('jwt', options,callback)
-   *      // AuthGuard('jwt')的canActivate中会执行request[options.property || defaultOptions.property] = user option.ts 中有配置默认值 property: 'user'
-   *      strategy.success = function(user, info) { }
+   *      // AuthGuard('jwt')的canActivate中会执行request[options.property || defaultOptions.property] = customer option.ts 中有配置默认值 property: 'customer'
+   *      strategy.success = function(customer, info) { }
    *      strategy.fail = function(challenge, status) {}
    *      strategy.redirect = function(url, status) {}
    *      strategy.pass = function() {}
@@ -119,10 +119,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
    */
   async validate(payload: JwtPayload): Promise<Payload> {
     // 没什么必要,除非密钥丢失了payload被篡改
-    // const user = await this.authService.validateUserById(payload.sub)
-    // if (!user) {
+    // const customer = await this.authService.validateCustomerById(payload.sub)
+    // if (!customer) {
     //   throw new UnauthorizedException()
     // }
-    return { id: payload.id, username: payload.username, roles: payload.roles }
+    return { id: payload.id, username: payload.username, role: payload.role }
   }
 }

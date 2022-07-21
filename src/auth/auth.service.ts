@@ -8,10 +8,10 @@ import { TokenType } from '@/shared/enums'
 import { sign, verify } from 'jsonwebtoken'
 import { getRepository, Repository } from 'typeorm'
 import { PasswordService } from '@/common/providers/password.service'
-import { User } from '@/entities/user.entity'
+import { Customer } from '@/entities/customer.entity'
 import { SecurityConfig } from '@/config/config.interface'
 
-type UserModleOmitPassword = Omit<User, 'password'>
+type CustomerModleOmitPassword = Omit<Customer, 'password'>
 
 @Injectable()
 export class AuthService {
@@ -35,25 +35,25 @@ export class AuthService {
    * 验证用户名和密码
    * @param name 
    * @param password 
-   * @returns 没有password 字段的User实例
+   * @returns 没有password 字段的Customer实例
    */
-  public async validateUser(name: string, password: string): Promise<UserModleOmitPassword | null> {
-    const user = await getRepository(User).findOne({
+  public async validateCustomer(name: string, password: string): Promise<CustomerModleOmitPassword | null> {
+    const customer = await getRepository(Customer).findOne({
       where: {
         name: name,
       },
     })
 
-    if (user && await this.passwordService.validatePassword(password, user.password)) {
-      const { password: _, ...result } = user
-      return new User(result)
+    if (customer && await this.passwordService.validatePassword(password, customer.password)) {
+      const { password: _, ...result } = customer
+      return new Customer(result)
     }
 
     return null
   }
 
-  public signJwt(user: UserModleOmitPassword): { access_token: string } {
-    const payload: JwtPayload = { id: user.id, username: user.name, roles: user.roleNames }
+  public signJwt(customer: CustomerModleOmitPassword): { access_token: string } {
+    const payload: JwtPayload = { id: customer.id, username: customer.name, role: customer.role?.name }
 
     return {
       access_token: this.jwtService.sign(payload),
@@ -76,13 +76,13 @@ export class AuthService {
     return this.jwtService.sign(payload)
   }
 
-  generateToken(user: User, type: TokenType): string {
+  generateToken(user: Customer, type: TokenType): string {
     // payload is JwtPayload type
     return sign(
       {
-        userId: user.id,
+        id: user.id,
         username: user.name,
-        roles: user.roleNames
+        role: user.role?.name
       },
       this.securityConfig[type].privateKey,
       {

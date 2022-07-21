@@ -3,7 +3,7 @@ import { Entity, Column, OneToMany, PrimaryColumn, ManyToMany } from 'typeorm'
 import { Exclude, Expose, plainToInstance, Type } from 'class-transformer'
 import { Field, ObjectType } from '@nestjs/graphql'
 import { IBase } from '@/types/interface/base.interface'
-import { User } from './user.type'
+import { Customer } from './customer.type'
 import { RoleOptions } from '@/shared/enums'
 
 @ObjectType({
@@ -11,9 +11,9 @@ import { RoleOptions } from '@/shared/enums'
 })
 export class Role extends IBase<Role> {
     @Expose()
-    @Type(() => User)
-    @Field(() => [User])
-    users: User[]
+    @Type(() => Customer)
+    @Field(() => [Customer])
+    customers: Customer[]
 
     @Expose()
     @Field({defaultValue: RoleOptions.USER})

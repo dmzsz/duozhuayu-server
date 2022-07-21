@@ -35,14 +35,14 @@ type Book {
   tags: BookTag!
   title: String!
   updatedAt: Date!
-  userContributed: [UserContribute!]!
+  customerContributed: [CustomerContribute!]!
 }
 
 type BookComment {
   badNum: Int!
   children: BookComment!
   createdAt: Date!
-  createdUser: User!
+  createdCustomer: Customer!
   goodNum: Int!
   id: ID!
   isOpened: Boolean!
@@ -76,10 +76,10 @@ type BookTag {
 
 input CreateEmailInput {
   type: EmailType!
-  userId: String!
+  customerId: String!
 }
 
-input CreateUserInput {
+input CreateCustomerInput {
   email: String = ""
   firstName: String = ""
   gender: Gender
@@ -92,10 +92,10 @@ scalar Date
 
 type Email {
   createdAt: Date!
-  fromUser: User!
+  fromCustomer: Customer!
   id: ID!
   isOpened: Boolean!
-  toUser: User!
+  toCustomer: Customer!
   type: EmailType!
   updatedAt: Date!
 }
@@ -128,17 +128,17 @@ scalar JWT
 
 type Mutation {
   createEmail(input: CreateEmailInput!): Email!
-  createLocalUser(user: CreateUserInput!): User!
+  createLocalCustomer(customer: CreateCustomerInput!): Customer!
   loginLocal: Token!
   openEmail(id: String!): Boolean!
   refreshToken(token: JWT!): Token!
-  signup(data: CreateUserInput!): Auth!
-  updateUser(data: UpdateUserInput!): User!
+  signup(data: CreateCustomerInput!): Auth!
+  updateCustomer(data: UpdateCustomerInput!): Customer!
 }
 
 type OpenCollection {
-  books: [UserContribute!]!
-  contributors: [UserContribute!]!
+  books: [CustomerContribute!]!
+  contributors: [CustomerContribute!]!
   contributorsCount: Int!
   createdAt: Date!
   description: String
@@ -146,9 +146,9 @@ type OpenCollection {
   image: BookImage!
   maskColor: String
   name: String!
-  proposer: User!
+  proposer: Customer!
   updatedAt: Date!
-  userContributes: [UserContribute!]!
+  customerContributes: [CustomerContribute!]!
 }
 
 type Producer {
@@ -166,7 +166,7 @@ type Producer {
 type Query {
   emails: [Email!]!
   findAllEmail: [Email!]!
-  findUser: User!
+  findCustomer: Customer!
 }
 
 type Token {
@@ -177,7 +177,7 @@ type Token {
   refreshToken: JWT!
 }
 
-input UpdateUserInput {
+input UpdateCustomerInput {
   email: String = ""
   firstName: String = ""
   gender: Gender
@@ -186,7 +186,7 @@ input UpdateUserInput {
   password: String
 }
 
-type User {
+type Customer {
   avatar: String!
   bookComments: [BookComment!]!
   books: [Book!]!
@@ -214,12 +214,12 @@ type User {
   session_key: String!
   unionid: String!
   updatedAt: Date!
-  userContributes: [UserContribute!]!
+  customerContributes: [CustomerContribute!]!
 }
 
-type UserContribute {
+type CustomerContribute {
   book: Book!
-  contributor: User!
+  contributor: Customer!
   createdAt: Date!
   id: ID!
   openCollection: OpenCollection!

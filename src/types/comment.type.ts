@@ -1,7 +1,7 @@
 import { IBase } from './interface/base.interface'
 import { Field, InterfaceType, ObjectType } from '@nestjs/graphql'
 import { Expose, plainToClass, plainToInstance, Type } from 'class-transformer'
-import { User } from './user.type'
+import { Customer } from './customer.type'
 import { EmailType, ProductType } from '@/shared/enums'
 import { Product } from './product.type'
 
@@ -34,9 +34,9 @@ export class Comment extends IBase<Comment> {
     * 发送者
     */
     @Expose()
-    @Type(() => User)
-    @Field(() => User)
-    createdUser: User
+    @Type(() => Customer)
+    @Field(() => Customer)
+    createdCustomer: Customer
 
     @Expose()
     @Type(() => Comment)

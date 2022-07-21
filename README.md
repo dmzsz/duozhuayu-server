@@ -71,3 +71,12 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+docker exec -i pg_container_name /bin/bash -c "PGPASSWORD=pg_password pg_dump --username pg_username database_name" > /desired/path/on/your/machine/dump.sql
+
+docker exec -i postgres /bin/bash -c "PGPASSWORD=root123 pg_dump --username postgres test" > ~/Desktop/duozhuayu.sql
+
+
+docker exec -i pg_container_name /bin/bash -c "PGPASSWORD=pg_password psql --username pg_username database_name" < /path/on/your/machine/dump.sql
+
+docker exec -i postgres /bin/bash -c "PGPASSWORD=root123 psql --username postges test" < /path/on/your/machine/dump.sql

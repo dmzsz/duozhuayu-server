@@ -4,7 +4,7 @@ import * as nodemailer from 'nodemailer'
 import * as handlebars from 'handlebars'
 import * as fs from 'fs'
 import { EmailType } from '@/shared/enums'
-import { User } from '@/entities/user.entity'
+import { Customer } from '@/entities/customer.entity'
 
 @Injectable()
 export class EmailService {
@@ -22,7 +22,7 @@ export class EmailService {
         this.END_POINT = configService.get("end_point")
         this.ISSUER = configService.get("issuer")
         this.NODEMAILER_PASS = configService.get("nodemailer_pass")
-        this.NODEMAILER_USER = configService.get("nodemailer_user")
+        this.NODEMAILER_USER = configService.get("nodemailer_customer")
     }
 
     /**
@@ -32,19 +32,19 @@ export class EmailService {
     * This method is part of the {@link shared/mail}.
     *
     * @param type  - 1st input
-    * @param user  - 2nd input
+    * @param customer  - 2nd input
     * @param req   - 3rd input
     * @param token - 4th input
     * @param id    - 5th input
     *
-    * @returns The any mean of `type`, `user`, `req`, `token` and `id`
+    * @returns The any mean of `type`, `customer`, `req`, `token` and `id`
     *
     * @beta
     */
 
     public async sendMail(
         type: EmailType,
-        user: User,
+        customer: Customer,
         req: any,
         token: string,
         id: string
@@ -55,7 +55,7 @@ export class EmailService {
             host: 'smtp.gmail.com',
             port: 587, // 465
             auth: {
-                user: this.NODEMAILER_USER,
+                customer: this.NODEMAILER_USER,
                 pass: this.NODEMAILER_PASS
             },
             tls: {
@@ -90,7 +90,7 @@ export class EmailService {
                 street: 'Su Van Hanh',
                 city: 'Ho Chi Minh',
                 country: 'Viet Nam',
-                to: user.firstName,
+                to: customer.firstName,
                 tracking: `http://${req.headers.host}/${this.END_POINT}/${id}`
             }
 
@@ -121,7 +121,7 @@ export class EmailService {
 
             const mailOptions = {
                 from: 'Dmzsz  📮:' + this.NODEMAILER_USER, // sender address
-                to: user.email, // list of receivers
+                to: customer.email, // list of receivers
                 subject: replacements[type].subject,
                 html: htmlToSend,
                 attachments: [

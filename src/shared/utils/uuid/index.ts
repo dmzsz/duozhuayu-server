@@ -1,6 +1,7 @@
 
 const { customAlphabet } = require('nanoid')
-
+const { Snowflake } = require('nodejs-snowflake')
+// const dotenv = require("dotenv")
 /**
  * Returns string by uuidv4.
  *
@@ -20,7 +21,15 @@ export const uuidv4 = (): string => {
 }
 
 export const randomId = (): string => {
-	return customAlphabet('1234567890', 18)()
+	// console.log(dotenv.config())
+	const uid = new Snowflake({
+		custom_epoch: parseInt(process.env.custom_epoch),
+		instance_id: parseInt(process.env.instance_id),
+	});
+	let id: bigint = uid.getUniqueID()
+	return id.toString();
+	// const now = new Date();
+	// return dateFormat(now, "yyyymmddHHMMssl");
 }
 
 /**

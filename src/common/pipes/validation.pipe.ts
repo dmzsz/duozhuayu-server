@@ -2,8 +2,8 @@ import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common'
 import { validate, ValidationOptions } from 'class-validator'
 import { plainToInstance } from 'class-transformer'
 import { UserInputError } from 'apollo-server-core'
-import { CreateUserInput, LoginUserInput, UpdateUserInput } from '@/graphql/inputs/user.input'
-// import { CreateUserInput, LoginUserInput, UpdateUserInput } from '@/graphql/inputs';
+import { CreateCustomerInput, LoginCustomerInput, UpdateCustomerInput } from '@/graphql/inputs/customer.input'
+// import { CreateCustomerInput, LoginCustomerInput, UpdateCustomerInput } from '@/graphql/inputs';
 
 @Injectable()
 export class ValidationPipe<T> implements PipeTransform<T> {
@@ -32,7 +32,7 @@ export class ValidationPipe<T> implements PipeTransform<T> {
   private toValidate(metatype: any): boolean {
     const types: any[] = [
       String, Boolean, Number, Array, Object,
-      CreateUserInput, UpdateUserInput, LoginUserInput]
+      CreateCustomerInput, UpdateCustomerInput, LoginCustomerInput]
     return !types.includes(metatype)
   }
 }

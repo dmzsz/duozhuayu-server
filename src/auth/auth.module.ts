@@ -6,20 +6,20 @@ import { AuthSerializer } from './auth.serializer'
 import { AuthService } from './auth.service'
 // import { LocalStrategy, JwtStrategy, JwtRefreshStrategy } from './strategies'
 import { PassportModule } from '@nestjs/passport'
-import { UserService } from '../graphql/services/user.service';
+import { CustomerService } from '../graphql/services/customer.service';
 import { GraphqlModule } from '../graphql/graphql.module';
 import { TypeOrmModule } from '@nestjs/typeorm'
-// import { User } from '@/entities'
+// import { Customer } from '@/entities'
 import { JwtRefreshStrategy } from './strategies/jwt-refresh-strategy'
 import { LocalStrategy } from './strategies/local.strategy'
 import { JwtStrategy } from './strategies/jwt.strategy'
-import { User } from '@/entities/user.entity'
+import { Customer } from '@/entities/customer.entity'
 
 @Global()
 @Module({
   imports: [
     // TypeOrmModule.forFeature([
-    //   User,
+    //   Customer,
     // ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({

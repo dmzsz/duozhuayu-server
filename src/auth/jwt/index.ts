@@ -2,12 +2,12 @@ import { sign, verify } from 'jsonwebtoken'
 import { getRepository } from 'typeorm'
 import { AuthenticationError, ForbiddenError } from 'apollo-server-core'
 
-// import { User } from '@/entities'
+// import { Customer } from '@/entities'
 // import { configuration } from '@/config'
 import { TokenType } from '@/shared/enums'
 import { Token } from '../models/token.model'
 import { configuration } from '@/config/configuration'
-import { User } from '@/entities/user.entity'
+import { Customer } from '@/entities/customer.entity'
 
 let config = await (await configuration())
 const ALGORITHM = config.algorithm
@@ -51,24 +51,24 @@ const common = {
  * @remarks
  * This method is part of the {@link auth/jwt}.
  *
- * @param user - 1st input
+ * @param customer - 1st input
  * @param type - 2nd input
  *
- * @returns The access token mean of `user`
+ * @returns The access token mean of `customer`
  *
  * @beta
  */
-export const generateToken = async (
-	user: User,
+export const generateCustomerToken = async (
+	customer: Customer,
 	type: TokenType
 ): Promise<string> => {
 
 	// payload is JwtPayload type
 	return await sign(
 		{
-			sub: user.id,
-			username: user.name,
-			roles: user.roleNames
+			sub: customer.id,
+			username: customer.name,
+			role: customer.role?.name
 		},
 		common[type].privateKey,
 		{
@@ -81,7 +81,7 @@ export const generateToken = async (
 }
 
 /**
- * Returns user by verify token.
+ * Returns customer by verify token.
  *
  * @remarks
  * This method is part of the {@link auth/jwt}.
@@ -89,15 +89,15 @@ export const generateToken = async (
  * @param token - 1st input
  * @param type - 2nd input
  *
- * @returns The user mean of `token`
+ * @returns The customer mean of `token`
  *
  * @beta
  */
-export const verifyToken = async (
+export const verifyCustomerToken = async (
 	token: string,
 	type: TokenType
-): Promise<User> => {
-	let currentUser
+): Promise<Customer> => {
+	let currentCustomer
 
 	await verify(token, common[type].privateKey, async (err, data) => {
 		if (err) {
@@ -106,20 +106,20 @@ export const verifyToken = async (
 			)
 		}
 
-		currentUser = await getRepository(User).findOne(
-			{ id: data['userId'] }
+		currentCustomer = await getRepository(Customer).findOne(
+			{ id: data['customerId'] }
 		)
 	})
 
 	if (type === TokenType.EMAIL_TOKEN) {
-		return currentUser
+		return currentCustomer
 	}
 
-	if (currentUser && !currentUser.isVerified) {
+	if (currentCustomer && !currentCustomer.isVerified) {
 		throw new ForbiddenError('Please verify your email.')
 	}
 
-	return currentUser
+	return currentCustomer
 }
 
 /**
@@ -128,27 +128,27 @@ export const verifyToken = async (
  * @remarks
  * This method is part of the {@link auth/jwt}.
  *
- * @param user - 1st input
+ * @param customer - 1st input
  *
- * @returns The login response mean of `user`
+ * @returns The login response mean of `customer`
  *
  * @beta
  */
-export const tradeToken = async (user: User): Promise<Token> => {
-	// if (!user.isVerified) {
+export const tradeCustomerToken = async (customer: Customer): Promise<Token> => {
+	// if (!customer.isVerified) {
 	// 	throw new ForbiddenError('Please verify your email.')
 	// }
 
-	if (!user.isActive) {
-		throw new ForbiddenError("User already doesn't exist.")
+	if (!customer.isActive) {
+		throw new ForbiddenError("Customer already doesn't exist.")
 	}
 
-	if (user.isLocked) {
+	if (customer.isLocked) {
 		throw new ForbiddenError('Your email has been locked.')
 	}
 
-	const accessToken = await generateToken(user, TokenType.ACCESS_TOKEN)
-	const refreshToken = await generateToken(user, TokenType.REFRESH_TOKEN)
+	const accessToken = await generateCustomerToken(customer, TokenType.ACCESS_TOKEN)
+	const refreshToken = await generateCustomerToken(customer, TokenType.REFRESH_TOKEN)
 
 	return { accessToken, refreshToken }
 }

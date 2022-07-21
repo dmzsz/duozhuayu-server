@@ -9,25 +9,25 @@ import { GraphqlOptionsFactory } from './GraphqlOptionsFactory'
 // import { Email } from '@/entities/email.entity'
 // import { Producer } from '@/entities/producer.entity'
 // import { Role } from '@/entities/roles.entity'
-// import { User } from '@/entities/user.entity'
+// import { Customer } from '@/entities/customer.entity'
 // import { DateScalar } from './scalars/date.scalar'
 import { EmailResolver } from './resolvers/email.resolver'
 import { AuthResolver } from './resolvers/auth.resolver'
-import { UsersResolver } from './resolvers/user.resolver'
-import { UserService } from './services/user.service'
+import { CustomersResolver } from './resolvers/customer.resolver'
+import { CustomerService } from './services/customer.service'
 import * as Scalar from './scalars'
 import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core'
 // import { DateScalar, EmailTypeScalar, GenderScalar, TokenTypeScalar } from './scalars'
-// import { UserService } from './services'
+// import { CustomerService } from './services'
 // import * as entities from '@/entities'
 import * as resolvers from './resolvers'
-// import { AuthResolver, EmailResolver, UsersResolver } from './resolvers'
+// import { AuthResolver, EmailResolver, CustomersResolver } from './resolvers'
 // import {
 //   Book,
 //   File,
 //   Producer,
 //   Role,
-//   User,
+//   Customer,
 //   Email,
 // } from '@/entities'
 
@@ -53,9 +53,9 @@ import * as resolvers from './resolvers'
     ...Object.values(resolvers),
     // EmailResolver,
     // AuthResolver,
-    // UsersResolver,
+    // CustomersResolver,
     // ...Object.values(Services),
-    UserService,
+    CustomerService,
   ],
 })
 export class GraphqlModule { }

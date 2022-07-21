@@ -6,7 +6,7 @@
 // 	GraphQLObjectType
 // } from 'graphql'
 // import { registerSchema, validate } from 'class-validator'
-// import { UserInputError } from 'apollo-server-core'
+// import { CustomerInputError } from 'apollo-server-core'
 // import { Logger } from '@nestjs/common'
 // import * as chalk from 'chalk'
 
@@ -30,9 +30,9 @@
 // 		field.resolve = async function(...args) {
 // 			const { input } = args[1]
 
-// 			let UserValidationSchema = {
+// 			let CustomerValidationSchema = {
 // 				// using interface here is not required, its just for type-safety
-// 				name: 'myUserSchema', // this is required, and must be unique
+// 				name: 'myCustomerSchema', // this is required, and must be unique
 // 				properties: {
 // 					firstName: [
 // 						{
@@ -46,9 +46,9 @@
 // 					]
 // 				}
 // 			}
-// 			registerSchema(UserValidationSchema)
-// 			const user = { firstName: 'Johny' }
-// 			validate('myUserSchema', user).then(errors => {
+// 			registerSchema(CustomerValidationSchema)
+// 			const customer = { firstName: 'Johny' }
+// 			validate('myCustomerSchema', customer).then(errors => {
 // 				if (errors.length > 0) {
 // 					console.log('Validation failed: ', errors)
 // 				} else {
@@ -73,7 +73,7 @@
 // 			const errors = await validate(schema, object)
 
 // 			if (errors.length > 0) {
-// 				throw new UserInputError(
+// 				throw new CustomerInputError(
 // 					`Form Arguments invalid: ${errors
 // 						.map(err => {
 // 							// tslint:disable-next-line: forin

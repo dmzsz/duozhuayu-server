@@ -1,11 +1,11 @@
 export interface JwtPayload {
   id: string
   username: string
-  roles: string[]
+  role?: string
 }
 
 export interface Payload {
   id: string
   username: string
-  roles: string[]
+  role?: string
 }

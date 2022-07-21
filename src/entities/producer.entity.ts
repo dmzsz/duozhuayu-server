@@ -1,9 +1,24 @@
-import { Entity, Column, OneToMany, PrimaryColumn, ManyToOne } from 'typeorm'
-import { Exclude, Expose, plainToClass, plainToInstance, Type } from 'class-transformer'
-import { Product } from './product.entity'
+import {
+    Exclude,
+    Expose,
+    plainToClass,
+    plainToInstance,
+    Type,
+} from 'class-transformer'
+import {
+    Column,
+    Entity,
+    ManyToOne,
+    OneToMany,
+    PrimaryColumn,
+} from 'typeorm'
+
 import { IBase } from './interface/base.interface'
 
 
+/**
+ * 出品商
+ */
 @Entity({
     name: 'producers',
     orderBy: {
@@ -21,11 +36,11 @@ export class Producer extends IBase<Producer> {
      * 总出品书数量
      */
     @Expose()
-    @Column()
+    @Column({ nullable: true, name: 'books_count' })
     booksCount: number
 
     @Expose()
-    @Column()
+    @Column({ nullable: true })
     description: string
 
     @Expose()
@@ -36,14 +51,14 @@ export class Producer extends IBase<Producer> {
      * logo
      */
     @Expose()
-    @Column()
+    @Column({ nullable: true })
     image: string
 
     /**
      * 背景主题色
      */
     @Expose()
-    @Column()
+    @Column({ nullable: true, name: 'mask_color' })
     maskColor: string
 
     // tagType: TagType

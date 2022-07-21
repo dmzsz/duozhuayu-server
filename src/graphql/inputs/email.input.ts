@@ -5,7 +5,7 @@ import { IsEnum } from 'class-validator'
 @InputType()
 export class CreateEmailInput {
     @Field()
-    userId: string
+    customerId: string
 
     @Field(() => EmailType) // 不指定类型的话会报错: Error: Undefined type error. Make sure you are providing an explicit type for the 'type' of the 'CreateEmailInput' class
     @IsEnum(EmailType)

@@ -69,7 +69,7 @@ export class GraphqlOptionsFactory implements GqlOptionsFactory {
       mocks: node_env === 'testing' && {
         // String: () => 'Chnirt',
         Query: () => ({
-          users: () => new MockList([2, 6])
+          customers: () => new MockList([2, 6])
         })
       },
       context: ({ req, res, connection }: any) => ({ req, res, pubsub }),

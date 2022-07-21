@@ -1,7 +1,12 @@
-import { randomId } from '@/shared/utils/uuid'
-import { InterfaceType } from '@nestjs/graphql'
-import { Expose, plainToInstance } from 'class-transformer'
-import { Column, CreateDateColumn, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import {
+  Expose,
+} from 'class-transformer'
+import {
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm'
+
 import { IResource } from './resource.interface'
 
 type ParentItself = IBaseExcludeId<ParentItself>
@@ -27,7 +32,7 @@ export abstract class IBaseExcludeId<T extends IBaseExcludeId<T> = ParentItself>
    */
   @Expose()
   @Column({ nullable: true, default: false })
-  isDelete?: boolean
+  isDelete: boolean = false
 
   /**
    * 

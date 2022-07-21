@@ -24,8 +24,8 @@ export function formattableDateDirectiveTransformer(
                 if (requires) {
                     const { resolve = defaultFieldResolver } = fieldConfig
                     fieldConfig.resolve = function (source, args, context, info) {
-                        const user = context.req.user
-                        if (!user.hasRole(requires)) {
+                        const customer = context.req.customer
+                        if (!customer.hasRole(requires)) {
                             throw new AuthenticationError('not authorized')
                         }
                         return resolve(source, args, context, info)

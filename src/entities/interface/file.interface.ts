@@ -1,7 +1,14 @@
-import { Column } from 'typeorm'
-import { Expose, plainToInstance } from 'class-transformer'
-import { IBase } from './base.interface'
+import {
+	Column,
+	Unique,
+} from 'typeorm'
+import {
+	Expose,
+	plainToInstance,
+} from 'class-transformer'
+import { IBase, } from './base.interface'
 
+@Unique("UNI_images_path_filename", ['path', 'filename'])
 export abstract class File extends IBase<File> {
 
 	@Expose()

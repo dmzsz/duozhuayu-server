@@ -1,5 +1,6 @@
 import { Field, ID, InterfaceType } from '@nestjs/graphql'
 import { Exclude, Expose, plainToInstance, Type } from 'class-transformer'
+import { PrimaryColumn } from 'typeorm'
 
 
 @InterfaceType()
